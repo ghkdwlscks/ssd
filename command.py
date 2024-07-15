@@ -66,3 +66,7 @@ class HelpCommand(Command):
             
         - fullread: 모든 lba 데이터를 읽어 화면에 표시 합니다.
         """)
+
+
+def make_command(command_type: str, *args) -> Command:
+    pass
