@@ -14,17 +14,14 @@ class ReadCommand(Command):
         self.index = index
 
     def run(self):
-        print("ReadCommand.run()")
         subprocess.run(["python", "ssd.py", "R", self.index])
 
 
 class FullReadCommand(Command):
     def run(self):
-        print("FullReadCommand.run()")
         subprocess.run(["python", "ssd.py", "FR"])
 
 
 class ExitCommand(Command):
     def run(self):
-        print("ExitCommand.run()")
         sys.exit()
