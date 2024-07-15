@@ -10,10 +10,18 @@ class Command(ABC):
 
 
 class ReadCommand(Command):
+    def __init__(self, index:int):
+        self.index = index
+
     def run(self):
         print("ReadCommand.run()")
-        subprocess.run(["python", "ssd.py", "R", "0", "0x0"])
+        subprocess.run(["python", "ssd.py", "R", self.index])
 
+class FullReadCommand(Command):
+    def run(self):
+        print("FullReadCommand.run()")
+        for index in range(100):
+            subprocess.run(["python", "ssd.py", "R", index])
 
 class ExitCommand(Command):
     def run(self):
