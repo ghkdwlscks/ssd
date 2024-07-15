@@ -10,7 +10,7 @@ class Command(ABC):
 
 
 class ReadCommand(Command):
-    def __init__(self, index: int):
+    def __init__(self, index: str):
         self.index = index
 
     def run(self):
@@ -28,7 +28,7 @@ class ExitCommand(Command):
 
 
 class WriteCommand(Command):
-    def __init__(self, index: int, value: int):
+    def __init__(self, index: str, value: str):
         self.__index = index
         self.__value = value
 
@@ -38,12 +38,12 @@ class WriteCommand(Command):
 
 class FullWriteCommand(Command):
 
-    def __init__(self, value: int):
+    def __init__(self, value: str):
         self.__value = value
 
     def run(self):
         for index in range(100):
-            write_command = WriteCommand(index, self.__value)
+            write_command = WriteCommand(str(index), self.__value)
             write_command.run()
 
 
@@ -72,9 +72,9 @@ def make_command(command: str) -> Command:
     command = command.split()
     if command[0] == "ssd":
         if command[1] == "R":
-            return ReadCommand(int(command[2]))
+            return ReadCommand(command[2])
         if command[1] == "W":
-            return WriteCommand(int(command[2]), int(command[3], 0))
+            return WriteCommand(command[2], command[3])
     if command[0] == "help":
         return HelpCommand()
     if command[0] == "exit":
