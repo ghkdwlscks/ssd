@@ -6,10 +6,10 @@ class Console:
         self.file_path = os.path.join(os.getcwd(), "result.txt")
 
     def is_exist_result_file(self):
-        return True if os.path.exists(self.file_path) else False
+        return os.path.exists(self.file_path)
 
     def is_valid_index(self, idx: int):
-        return True if (0 <= idx <= 99) else False
+        return 0 <= idx <= 99
 
     def read_result_file(self):
         results = []
@@ -25,18 +25,17 @@ class Console:
 
     def read(self, idx: int):
         if not self.is_exist_result_file():
-            print("[CONSOLE] NO RESULT.TXT")
             return False
         elif not self.is_valid_index(idx):
-            print("[CONSOLE] INVALID LBA INDEX")
             return False
         else:
             data = self.read_result_file()
 
-        if len(data) != 100:
-            print("[CONSOLE] INVALID RESULT.TXT")
-            return False
+        return self.find_and_print_value_if_exist(data, idx)
 
-        sorted_data = sorted(data, key=lambda x: x[0])
-        print(sorted_data[idx][1])
-        return True
+    def find_and_print_value_if_exist(self, data, idx):
+        for row in data:
+            if row[0] == idx:
+                print(row[1])
+                return True
+        return False
