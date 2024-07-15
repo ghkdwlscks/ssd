@@ -24,5 +24,3 @@ class TestCommandRead(TestCase):
         fullread_command = FullReadCommand()
         fullread_command.run()
         mock_run.assert_called_once_with(["python", 'ssd.py', 'FR'])
-        
-
