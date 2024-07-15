@@ -17,14 +17,14 @@ class TestConsole(TestCase):
         self.assertFalse(self.sut.read(0))
 
     # result.txt 파일이 내용이 불완전 하다고 가정; Mock 사용
-    def test_read_imcomplete_result_file(self):
+    def test_read_with_mismatched_index(self):
         self.sut.is_exist_result_file = Mock()
         self.sut.is_exist_result_file.return_value = True
 
         self.sut.read_result_file = Mock()
         self.sut.read_result_file.return_value = [(0, 12), (5, 12)]
 
-        self.assertFalse(self.sut.read(0))
+        self.assertFalse(self.sut.read(2))
 
     def test_out_of_read_index(self):
         self.sut.is_exist_result_file = Mock()
