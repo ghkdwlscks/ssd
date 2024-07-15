@@ -6,6 +6,8 @@ from shell import Shell
 
 INDEX_0 = 0
 INDEX_10 = 10
+
+
 class TestCommandRead(TestCase):
     @patch('subprocess.run')
     def test_read_index_0(self, mock_run):
@@ -20,14 +22,7 @@ class TestCommandRead(TestCase):
         mock_run.assert_called_once_with(["python", 'ssd.py', 'R', INDEX_10])
 
     @patch('subprocess.run')
-    def test_fullread(self,mock_run):
+    def test_fullread(self, mock_run):
         fullread_command = FullReadCommand()
         fullread_command.run()
         self.assertEqual(100, mock_run.call_count)
-
-
-
-
-
-
-
