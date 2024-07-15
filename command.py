@@ -28,7 +28,7 @@ class ExitCommand(Command):
 
 
 class WriteCommand(Command):
-    def __init__(self, index: int, value: str):
+    def __init__(self, index: int, value: int):
         self.__index = index
         self.__value = value
 
@@ -38,7 +38,7 @@ class WriteCommand(Command):
 
 class FullWriteCommand(Command):
 
-    def __init__(self, value: str):
+    def __init__(self, value: int):
         self.__value = value
 
     def run(self):
