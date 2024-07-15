@@ -68,5 +68,14 @@ class HelpCommand(Command):
         """)
 
 
-def make_command(command_type: str, *args) -> Command:
-    pass
+def make_command(command: str) -> Command:
+    command = command.split()
+    if command[0] == "ssd":
+        if command[1] == "R":
+            return ReadCommand(int(command[2]))
+        if command[1] == "W":
+            return WriteCommand(int(command[2]), int(command[3], 0))
+    if command[0] == "help":
+        return HelpCommand()
+    if command[0] == "exit":
+        return ExitCommand()

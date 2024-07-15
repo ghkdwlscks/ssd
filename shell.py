@@ -1,6 +1,6 @@
 import re
 
-from command import Command, make_command
+from command import Command, FullReadCommand, make_command, ReadCommand
 from console import Console
 
 
@@ -16,7 +16,8 @@ class Shell:
                 print("INVALID COMMAND")
                 continue
             command.run()
-            self.console.read()
+            if isinstance(command, (ReadCommand, FullReadCommand)):
+                self.console.read()
 
     @staticmethod
     def parse_command(command: str) -> Command:
