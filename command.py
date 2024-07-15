@@ -29,3 +29,15 @@ class WriteCommand(Command):
     def run(self):
         print("WriteCommand.run()")
         subprocess.run(["python", "ssd.py", "W", self.__index, self.__value])
+
+
+class FullWriteCommand(Command):
+
+    def __init__(self, value: str):
+        self.__value = value
+
+    def run(self):
+        print("FullWriteCommand.run()")
+        for index in range(100):
+            write_command = WriteCommand(index, self.__value)
+            write_command.run()
