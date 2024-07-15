@@ -27,11 +27,11 @@ class TestCommand(TestCase):
 
         self.command.run()
 
-        self.assertTrue(mock_run.call_count, 100)
+        self.assertEqual(100, mock_run.call_count)
 
     @patch('sys.stdout', new_callable=StringIO)
     def test_help_command_run(self, mock_stdout):
-        expected_output ="""
+        expected_output = """
         - write: lba에 데이터를 기록합니다.
             write {{lba}} {{data}}
             
@@ -51,4 +51,4 @@ class TestCommand(TestCase):
 
         self.command.run()
 
-        self.assertEqual(mock_stdout.getvalue().strip(), expected_output.strip())
+        self.assertEqual(expected_output.strip(), mock_stdout.getvalue().strip())
