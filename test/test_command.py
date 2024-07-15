@@ -2,7 +2,7 @@ from io import StringIO
 from unittest import TestCase
 from unittest.mock import patch
 
-from command import WriteCommand, FullWriteCommand, Command, HelpCommand
+from command import WriteCommand, FullWriteCommand, HelpCommand
 
 
 class TestCommand(TestCase):
@@ -29,7 +29,8 @@ class TestCommand(TestCase):
 
         self.assertTrue(mock_run.call_count, 100)
 
-    def test_help_command_run(self):
+    @patch('sys.stdout', new_callable=StringIO)
+    def test_help_command_run(self, mock_stdout):
         expected_output ="""
         - write: lba에 데이터를 기록합니다.
             write {{lba}} {{data}}
@@ -46,10 +47,8 @@ class TestCommand(TestCase):
             
         - fullread: 모든 lba 데이터를 읽어 화면에 표시 합니다.
         """
-
         self.command = HelpCommand()
-        with patch('sys.stdout', new=StringIO()) as fake_out:
-            self.command.run()
-            printed_output = fake_out.getvalue().strip()  # Get printed output and strip any extra whitespace
 
-        self.assertEqual(printed_output, expected_output.strip())
+        self.command.run()
+
+        self.assertEqual(mock_stdout.getvalue().strip(), expected_output.strip())
