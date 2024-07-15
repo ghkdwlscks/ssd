@@ -8,9 +8,6 @@ class Console:
     def is_exist_result_file(self):
         return os.path.exists(self.file_path)
 
-    def is_valid_index(self, idx: int):
-        return 0 <= idx <= 99
-
     def read_result_file(self):
         results = []
         try:
@@ -23,19 +20,17 @@ class Console:
             pass
         return results
 
-    def read(self, idx: int):
+    def print_result_file(self, result_file):
+        for data in result_file:
+            print(data[1])
+
+    def read(self):
         if not self.is_exist_result_file():
             return False
-        elif not self.is_valid_index(idx):
+
+        data = self.read_result_file()
+        if len(data) == 0:
             return False
-        else:
-            data = self.read_result_file()
 
-        return self.find_and_print_value_if_exist(data, idx)
-
-    def find_and_print_value_if_exist(self, data, idx):
-        for row in data:
-            if row[0] == idx:
-                print(row[1])
-                return True
-        return False
+        self.print_result_file(data)
+        return True
