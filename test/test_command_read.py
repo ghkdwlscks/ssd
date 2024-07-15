@@ -1,8 +1,6 @@
 from unittest import TestCase
 from unittest.mock import Mock, patch
 from command import ReadCommand, FullReadCommand
-from ssd import SSD
-from shell import Shell
 
 INDEX_0 = 0
 INDEX_10 = 10
@@ -25,4 +23,6 @@ class TestCommandRead(TestCase):
     def test_fullread(self, mock_run):
         fullread_command = FullReadCommand()
         fullread_command.run()
-        self.assertEqual(100, mock_run.call_count)
+        mock_run.assert_called_once_with(["python", 'ssd.py', 'FR'])
+        
+
