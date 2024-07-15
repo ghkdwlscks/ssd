@@ -6,11 +6,17 @@ from command import WriteCommand
 
 class TestCommand(TestCase):
     @patch('subprocess.run')
-    def test_write_run(self, mock_run):
-        lba = "3"
+    def test_write_command_run(self, mock_run):
+        index = 3
         value = "0xAAAABBBB"
-        write_command = WriteCommand()
+        write_command = WriteCommand(index, value)
 
-        result = write_command.run(lba, value)
+        result = write_command.run()
 
-        mock_run.assert_called_once_with(["python", "ssd.py", "W", lba, value])
+        mock_run.assert_called_once_with(["python", "ssd.py", "W", index, value])
+
+    @patch('subprocess.run')
+    def test_full_write_run(self, mock_run):
+        value = "0xAAAABBBB"
+        full_write_
+

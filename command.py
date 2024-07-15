@@ -22,7 +22,10 @@ class ExitCommand(Command):
 
 
 class WriteCommand(Command):
-    def run(self, *args):
+    def __init__(self, index: int, value: str):
+        self.__index = index
+        self.__value = value
+
+    def run(self):
         print("WriteCommand.run()")
-        lba, value = args
-        subprocess.run(["python", "ssd.py", "W", lba, value])
+        subprocess.run(["python", "ssd.py", "W", self.__index, self.__value])
