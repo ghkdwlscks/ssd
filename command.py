@@ -5,7 +5,7 @@ from abc import ABC, abstractmethod
 
 class Command(ABC):
     @abstractmethod
-    def run(self):
+    def run(self, *args):
         raise NotImplementedError
 
 
@@ -19,3 +19,10 @@ class ExitCommand(Command):
     def run(self):
         print("ExitCommand.run()")
         sys.exit()
+
+
+class WriteCommand(Command):
+    def run(self, *args):
+        print("WriteCommand.run()")
+        lba, value = args
+        subprocess.run(["python", "ssd.py", "W", lba, value])
