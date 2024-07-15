@@ -11,7 +11,7 @@ class Shell:
     def run(self):
         while True:
             try:
-                command = self.parse_command(input())
+                command = self.parse_command(input("$ "))
             except ValueError:
                 print("INVALID COMMAND")
                 continue
