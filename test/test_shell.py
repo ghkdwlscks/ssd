@@ -17,10 +17,10 @@ class TestShell(TestCase):
 
     def test_parse_command_with_valid_read_and_write_commands(self):
         try:
-            self.shell.parse_command("ssd R 1")
-            self.shell.parse_command("ssd R 11")
-            self.shell.parse_command("ssd W 1 0x00000000")
-            self.shell.parse_command("ssd W 11 0xFFFFFFFF")
+            self.shell.parse_command("read 1")
+            self.shell.parse_command("read 11")
+            self.shell.parse_command("write 1 0x00000000")
+            self.shell.parse_command("write 11 0xFFFFFFFF")
         except ValueError:
             self.fail()
 
