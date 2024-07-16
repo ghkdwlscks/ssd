@@ -5,7 +5,6 @@ class Console:
     def __init__(self):
         dir_path = os.path.dirname(__file__)
         self.file_path = os.path.join(dir_path, "output", "result.txt")
-        print(self.file_path)
 
     def is_exist_result_file(self):
         return os.path.exists(self.file_path)
