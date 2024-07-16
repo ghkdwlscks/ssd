@@ -74,10 +74,17 @@ class SSD:
 
 if __name__ == "__main__":
     args = sys.argv
-    _ = args[0]
-    cmd = args[1]
-    lba = args[2]
-    data = args[3]
+    cmd = None
+    lba = None
+    data = None
+    if len(args) >= 1:
+        _ = args[0]
+    if len(args) >= 2:
+        cmd = args[1]
+    if len(args) >= 3:
+        lba = args[2]
+    if len(args) >= 4:
+        data = args[3]
 
     SSD().set_command(cmd, int(lba), data)
     SSD().run()
