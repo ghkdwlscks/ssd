@@ -1,0 +1,1 @@
+fullwrite 0x0123CDEF
