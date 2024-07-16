@@ -3,8 +3,8 @@ import sys
 from abc import ABC, abstractmethod
 
 from console import Console
+from constant import *
 
-NUM_LBA = 100
 class Command(ABC):
     @abstractmethod
     def run(self):

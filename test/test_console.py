@@ -2,7 +2,7 @@ from unittest import TestCase
 from unittest.mock import Mock
 
 from console import Console
-
+from constant import *
 
 class TestConsole(TestCase):
 
@@ -21,7 +21,7 @@ class TestConsole(TestCase):
         self.sut.is_exist_result_file.return_value = True
 
         self.sut.read_result_file = Mock()
-        mock_value = '0x32991111'
+        mock_value = VALUE_0x32991111
         self.sut.read_result_file.return_value = mock_value
 
         self.assertTrue(self.sut.read())

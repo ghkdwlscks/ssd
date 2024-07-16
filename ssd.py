@@ -2,9 +2,9 @@ import os
 import sys
 
 from console import Console
+from constant import *
 
 CMD_LIST = ['R', 'W', 'FR']
-NUM_LBA = 100
 
 class SSD:
     def __init__(self):
@@ -19,7 +19,7 @@ class SSD:
     def refresh_nand(self):
         with open(self.nand_file_path, 'w') as f:
             for i in range(NUM_LBA):
-                f.write(f'{i} 0x00000000\n')
+                f.write(f'{i} {VALUE_DEFAULT}\n')
 
     def set_command(self, cmd: str, lba: int, data: None or str = None):
         if cmd not in CMD_LIST:
@@ -31,11 +31,11 @@ class SSD:
         self.data = data
 
     def run(self):
-        if self.cmd == 'R':
+        if self.cmd == CMD_R:
             self.read()
-        elif self.cmd == 'W':
+        elif self.cmd == CMD_W:
             self.write()
-        elif self.cmd == 'FR':
+        elif self.cmd == CMD_FR:
             self.full_read()
 
     def full_read(self):
