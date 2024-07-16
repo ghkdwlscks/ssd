@@ -5,8 +5,6 @@ import sys
 from console import Console
 from constant import *
 
-CMD_LIST = [CMD_R, CMD_W]
-
 
 def can_convert_into_int(_target):
     try:
