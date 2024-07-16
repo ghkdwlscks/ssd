@@ -77,26 +77,25 @@ class SSD:
                     lba, data = line.strip().split()
                     result.append([lba, data])
                     line = f.readline()
-        except:
+        except FileNotFoundError:
             self.refresh_nand()
             result = self.__read_nand()
         return result
 
-    # validation check 에러시, nand 초기화 후 read 진행.
-    def __get_data_list_of_nand_file(self) -> list[list[int, str]]:
+    def __get_data_list_of_nand_file(self) -> list[list]:
         result = self.__read_nand()
 
+        # validation check 에러시, nand 초기화 후 read  재 진행.
         if not self.__check_nand_validation(result):
             self.refresh_nand()
-            self.__get_data_list_of_nand_file()
+            result = self.__get_data_list_of_nand_file()
 
         return result
 
-    def __check_nand_validation(self, read_result):
-        # nand 데이터 유효성 검사
-        if len(read_result) != 100:
-            raise ValueError
-        for _lba, _data in read_result:
+    def __check_nand_validation(self, nand_read_result):
+        if len(nand_read_result) != 100:
+            return False
+        for _lba, _data in nand_read_result:
             if is_valid_lba(_lba) and is_valid_data(_data):
                 continue
             else:
@@ -115,13 +114,12 @@ class SSD:
     '''
 
     def write(self):
-        lines = self.__read_nand()
+        nand_read_result = self.__get_data_list_of_nand_file()
 
-        new_line_content = [self.lba, self.data]
-        lines[self.lba] = new_line_content
+        nand_read_result[self.lba] = [self.lba, self.data]
 
         with open(self.nand_file_path, 'w') as f:
-            f.writelines([f'{_lba} {_data}\n' for _lba, _data in lines])
+            f.writelines([f'{_lba} {_data}\n' for _lba, _data in nand_read_result])
 
 
 if __name__ == "__main__":
