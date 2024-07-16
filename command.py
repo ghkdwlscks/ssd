@@ -19,7 +19,9 @@ class ReadCommand(Command):
 
 class FullReadCommand(Command):
     def run(self):
-        subprocess.run(["python", "ssd.py", "FR"])
+        for index in range(100):
+            read_command = ReadCommand(index)
+            read_command.run()
 
 
 class ExitCommand(Command):
