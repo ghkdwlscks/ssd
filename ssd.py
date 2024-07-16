@@ -22,16 +22,6 @@ class SSD:
             for i in range(0, 100):
                 f.write(f'{i} 0x00000000\n')
 
-    def check_nand_txt(self, addr):
-        with open(self.nand_file_path, 'r') as f:
-            line = f.readline()
-            while line:
-                lba, data = line.split()
-                if int(lba) == addr:
-                    return data
-                line = f.readline()
-        return None
-
     def set_command(self, cmd, lba, data=None):
         if cmd not in CMD_LIST:
             raise AttributeError
@@ -80,13 +70,6 @@ class SSD:
             # 파일을 쓰기 모드로 열어서 수정된 내용 쓰기
             with open(self.nand_file_path, 'w') as file:
                 file.writelines(lines)
-
-    def check_result_txt(self):
-        try:
-            with open(self.result_file_path, 'r') as f:
-                return f.readline()
-        except FileNotFoundError:
-            raise NotImplementedError
 
 
 if __name__ == "__main__":
