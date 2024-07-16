@@ -71,7 +71,6 @@ class SSD:
                 line = f.readline()
         return result
 
-
     '''
     nand.txt에 write되는 형식
     {lba} {data}
@@ -82,9 +81,15 @@ class SSD:
     ....
     99 0x0404012
     '''
+
     def write(self):
-        with open(self.nand_file_path, 'r') as f:
-            lines = f.readlines()
+        try:
+            with open(self.nand_file_path, 'r') as f:
+                lines = f.readlines()
+        except:
+            self.refresh_nand()
+            with open(self.nand_file_path, 'r') as f:
+                lines = f.readlines()
 
         if self.lba >= len(lines):
             raise SystemError
