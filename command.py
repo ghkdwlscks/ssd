@@ -28,11 +28,6 @@ class FullReadCommand(Command):
             read_command.run()
 
 
-class ExitCommand(Command):
-    def run(self):
-        sys.exit()
-
-
 class WriteCommand(Command):
     def __init__(self, index: str, value: str):
         self.__index = index
@@ -51,6 +46,11 @@ class FullWriteCommand(Command):
         for index in range(NUM_LBA):
             write_command = WriteCommand(str(index), self.__value)
             write_command.run()
+
+
+class ExitCommand(Command):
+    def run(self):
+        sys.exit()
 
 
 class HelpCommand(Command):
