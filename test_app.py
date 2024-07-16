@@ -40,7 +40,6 @@ class TestApp:
 class TestApp1(TestApp):
 
     def _validate(self) -> bool:
-        self._run_command("fullread")
         return len(set(self.output.getvalue().splitlines())) == 1
 
 
