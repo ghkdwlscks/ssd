@@ -4,6 +4,8 @@ from unittest.mock import Mock
 
 from ssd import SSD
 
+FULL_READ_FILE = '\n'.join(['0x00000000' for _ in range(100)])
+
 
 class TestSSD(TestCase):
     def setUp(self):
@@ -57,3 +59,9 @@ class TestSSD(TestCase):
         self.result_txt_file.return_value = '0xAB010105'
 
         self.assertEqual("0xAB010105", self.result_txt_file())
+
+    def test_full_read(self):
+        self.sut.refresh_nand()
+        self.result_txt_file.return_value = FULL_READ_FILE
+        self.sut.full_read()
+        self.assertEqual(FULL_READ_FILE, self.result_txt_file())
