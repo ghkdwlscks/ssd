@@ -20,10 +20,9 @@ class Console:
     def read(self):
         if not self.is_exist_result_file():
             return
-        if not self.read_result_file():
+        if not (result := self.read_result_file()):
             return
-
-        print(self.read_result_file())
+        print(result)
 
     def write(self, data):
         if not self.is_exist_result_file():
