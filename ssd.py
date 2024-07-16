@@ -5,7 +5,7 @@ import sys
 from console import Console
 from constant import *
 
-CMD_LIST = ['R', 'W']
+CMD_LIST = [CMD_R, CMD_W]
 
 
 def can_convert_into_int(_target):
@@ -17,7 +17,7 @@ def can_convert_into_int(_target):
 
 
 def is_valid_lba(_lda):
-    if can_convert_into_int(_lda) and int(_lda) < 100:
+    if can_convert_into_int(_lda) and int(_lda) < NUM_LBA:
         return True
     else:
         return False
@@ -28,6 +28,7 @@ def is_valid_data(_data):
         return True
     else:
         return False
+
 
 class SSD:
     def __init__(self):
@@ -66,6 +67,7 @@ class SSD:
     '''
     nand.txt를 읽어, list[[lba,data]]을 반환합니다.
     '''
+
     def __read_nand(self):
         result = []
         try:
