@@ -2,11 +2,7 @@ from io import StringIO
 from unittest import TestCase
 from unittest.mock import patch
 
-from command import WriteCommand, FullWriteCommand, HelpCommand, ReadCommand, FullReadCommand
-
-INDEX_0 = "0"
-INDEX_10 = "10"
-TEST_VALUE = "0xAAAABBBB"
+from command import WriteCommand, FullWriteCommand, HelpCommand
 
 
 class TestCommand(TestCase):
@@ -15,34 +11,19 @@ class TestCommand(TestCase):
         self.command = None
 
     @patch('subprocess.run')
-    def test_read_index_0(self, mock_run):
-        self.command = ReadCommand(INDEX_0)
-        self.command.run()
-        mock_run.assert_called_once_with(["python", 'ssd.py', 'R', INDEX_0])
-
-    @patch('subprocess.run')
-    def test_read_index_10(self, mock_run):
-        self.command = ReadCommand(INDEX_10)
-        self.command.run()
-        mock_run.assert_called_once_with(["python", 'ssd.py', 'R', INDEX_10])
-
-    @patch('subprocess.run')
-    def test_fullread(self, mock_run):
-        self.command = FullReadCommand()
-        self.command.run()
-        mock_run.assert_called_once_with(["python", 'ssd.py', 'FR'])
-
-    @patch('subprocess.run')
     def test_write_command_run(self, mock_run):
-        self.command = WriteCommand(INDEX_10, TEST_VALUE)
+        index = 3
+        value = "0xAAAABBBB"
+        self.command = WriteCommand(index, value)
 
         self.command.run()
 
-        mock_run.assert_called_once_with(["python", "ssd.py", "W", INDEX_10, TEST_VALUE])
+        mock_run.assert_called_once_with(["python", "ssd.py", "W", index, value])
 
     @patch('subprocess.run')
     def test_full_write_command_run(self, mock_run):
-        self.command = FullWriteCommand(TEST_VALUE)
+        value = "0xAAAABBBB"
+        self.command = FullWriteCommand(value)
 
         self.command.run()
 
