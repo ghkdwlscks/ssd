@@ -24,7 +24,7 @@ class ReadCommand(Command):
 class FullReadCommand(Command):
     def run(self):
         for index in range(100):
-            read_command = ReadCommand(index)
+            read_command = ReadCommand(str(index))
             read_command.run()
 
 
