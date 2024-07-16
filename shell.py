@@ -15,25 +15,29 @@ class Shell:
                 continue
             command.run()
 
-    @staticmethod
-    def parse_command(command: str) -> Command or TestApp:
+    def parse_command(self, command: str) -> Command or TestApp:
         command = command.strip()
-        if re.fullmatch(r"read [0-9]{1,2}", command):
+        if self.is_ssd_command(command):
             return make_command(command)
-        if re.fullmatch(r"write [0-9]{1,2} 0x[0-9A-F]{8}", command):
-            return make_command(command)
-        if command == "help":
-            return make_command(command)
-        if command == "exit":
-            return make_command(command)
-        if command == "fullread":
-            return make_command(command)
-        if re.fullmatch(r"fullwrite 0x[0-9A-F]{8}", command):
-            return make_command(command)
-        if command in ["testapp1", "testapp2"]:
+        if self.is_test_command(command):
             return make_test_app(command)
-
         raise ValueError
+
+    @staticmethod
+    def is_ssd_command(command):
+        if command in ["help", "exit", "fullread"]:
+            return True
+        if re.fullmatch(r"read [0-9]{1,2}", command):
+            return True
+        if re.fullmatch(r"write [0-9]{1,2} 0x[0-9A-F]{8}", command):
+            return True
+        if re.fullmatch(r"fullwrite 0x[0-9A-F]{8}", command):
+            return True
+        return False
+
+    @staticmethod
+    def is_test_command(command):
+        return command in ["testapp1", "testapp2"]
 
 
 if __name__ == "__main__":
