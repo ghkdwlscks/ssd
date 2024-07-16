@@ -72,12 +72,15 @@ class HelpCommand(Command):
 
 def make_command(command: str) -> Command:
     command = command.split()
-    if command[0] == "ssd":
-        if command[1] == "R":
-            return ReadCommand(command[2])
-        if command[1] == "W":
-            return WriteCommand(command[2], command[3])
+    if command[0] == "read":
+        return ReadCommand(command[1])
+    if command[0] == 'write':
+        return WriteCommand(command[1], command[2])
     if command[0] == "help":
         return HelpCommand()
     if command[0] == "exit":
         return ExitCommand()
+    if command[0] == "fullread":
+        return FullReadCommand()
+    if command[0] == "fullwrite":
+        return FullWriteCommand(command[1])

@@ -11,7 +11,7 @@ class Shell:
     def run(self):
         while True:
             try:
-                command = self.parse_command(input())
+                command = self.parse_command(input("$ "))
             except ValueError:
                 print("INVALID COMMAND")
                 continue
@@ -21,14 +21,20 @@ class Shell:
 
     @staticmethod
     def parse_command(command: str) -> Command:
-        if re.fullmatch(r"ssd R [0-9]{1,2}", command):
+        command = command.strip()
+        if re.fullmatch(r"read [0-9]{1,2}", command):
             return make_command(command)
-        if re.fullmatch(r"ssd W [0-9]{1,2} 0x[0-9A-F]{8}", command):
+        if re.fullmatch(r"write [0-9]{1,2} 0x[0-9A-F]{8}", command):
             return make_command(command)
         if command == "help":
             return make_command(command)
         if command == "exit":
             return make_command(command)
+        if command == "fullread":
+            return make_command(command)
+        if re.fullmatch(r"fullwrite 0x[0-9A-F]{8}", command):
+            return make_command(command)
+
         raise ValueError
 
 
