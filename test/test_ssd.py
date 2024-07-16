@@ -15,8 +15,7 @@ class TestSSD(TestCase):
         self.nand_txt_file = Mock()
         self.console = Mock(spec=Console())
         self.console.read.return_value = True
-        self.nand_txt_file.side_effect = lambda x: VALUE_0xAB010105 if x == INT_INDEX_5 else VALUE_DEFAULT
-
+        self.nand_txt_file.side_effect = lambda x: '0xAB010105' if x == 5 else '0x00000000'
     def tearDown(self):
         if NAND_TXT_PATH in os.environ:
             del os.environ[NAND_TXT_PATH]
