@@ -15,7 +15,8 @@ class TestSSD(TestCase):
         self.nand_txt_file = Mock()
         self.console = Mock(spec=Console())
         self.console.read.return_value = True
-        self.nand_txt_file.side_effect = lambda x: '0xAB010105' if x == 5 else '0x00000000'
+        self.nand_txt_file.side_effect = lambda x: VALUE_0xAB010105 if x == 5 else VALUE_DEFAULT
+
     def tearDown(self):
         if NAND_TXT_PATH in os.environ:
             del os.environ[NAND_TXT_PATH]
@@ -39,7 +40,6 @@ class TestSSD(TestCase):
         self.sut.run()
         self.assertEqual(True, self.console.read())
 
-
     def test_ssd_write(self):
         self.sut.refresh_nand()
         self.sut.set_command(CMD_W, INT_INDEX_5, VALUE_0xAB010105)
@@ -56,4 +56,3 @@ class TestSSD(TestCase):
         self.sut.run()
 
         self.assertEqual(True, self.console.read())
-
