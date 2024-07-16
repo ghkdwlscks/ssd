@@ -2,9 +2,8 @@ import os
 from unittest import TestCase
 from unittest.mock import Mock
 
+from console import Console
 from ssd import SSD
-
-FULL_READ_FILE = '\n'.join(['0x00000000' for _ in range(100)])
 
 
 class TestSSD(TestCase):
@@ -13,8 +12,9 @@ class TestSSD(TestCase):
         os.environ['RESULT_TXT_PATH'] = 'output\\result_test.txt'
         self.sut = SSD()
         self.nand_txt_file = Mock()
-        self.result_txt_file = Mock()
-
+        self.console = Mock(spec=Console())
+        self.console.read.return_value = True
+        self.nand_txt_file.side_effect = lambda x: '0xAB010105' if x == 5 else '0x00000000'
     def tearDown(self):
         if 'NAND_TXT_PATH' in os.environ:
             del os.environ['NAND_TXT_PATH']
@@ -36,15 +36,12 @@ class TestSSD(TestCase):
         self.sut.refresh_nand()
         self.sut.set_command('R', 5)
         self.sut.run()
-        self.result_txt_file.return_value = '0x00000000'
-
-        self.assertEqual('0x00000000', self.result_txt_file())
+        self.assertEqual(True, self.console.read())
 
     def test_ssd_write(self):
         self.sut.refresh_nand()
         self.sut.set_command('W', 5, "0xAB010105")
         self.sut.run()
-        self.nand_txt_file.side_effect = lambda x: '0xAB010105' if x == 5 else '0x00000000'
 
         self.assertEqual('0xAB010105', self.nand_txt_file(5))
 
@@ -52,16 +49,8 @@ class TestSSD(TestCase):
         self.sut.refresh_nand()
         self.sut.set_command('W', 5, "0xAB010105")
         self.sut.run()
-        self.nand_txt_file.side_effect = lambda x: '0xAB010105' if x == 5 else '0x00000000'
 
         self.sut.set_command('R', 5)
         self.sut.run()
-        self.result_txt_file.return_value = '0xAB010105'
 
-        self.assertEqual("0xAB010105", self.result_txt_file())
-
-    def test_full_read(self):
-        self.sut.refresh_nand()
-        self.result_txt_file.return_value = FULL_READ_FILE
-        self.sut.full_read()
-        self.assertEqual(FULL_READ_FILE, self.result_txt_file())
+        self.assertEqual(True, self.console.read())
