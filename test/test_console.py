@@ -21,7 +21,7 @@ class TestConsole(TestCase):
         self.sut.is_exist_result_file.return_value = True
 
         self.sut.read_result_file = Mock()
-        mock_value = [(x, f'0x32{x}') for x in range(100)]
+        mock_value = '0x32991111'
         self.sut.read_result_file.return_value = mock_value
 
         self.assertTrue(self.sut.read())
