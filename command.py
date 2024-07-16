@@ -4,7 +4,7 @@ from abc import ABC, abstractmethod
 
 from console import Console
 
-MAX_LBA = 100
+NUM_LBA = 100
 class Command(ABC):
     @abstractmethod
     def run(self):
@@ -23,7 +23,7 @@ class ReadCommand(Command):
 
 class FullReadCommand(Command):
     def run(self):
-        for index in range(MAX_LBA):
+        for index in range(NUM_LBA):
             read_command = ReadCommand(str(index))
             read_command.run()
 
@@ -48,7 +48,7 @@ class FullWriteCommand(Command):
         self.__value = value
 
     def run(self):
-        for index in range(MAX_LBA):
+        for index in range(NUM_LBA):
             write_command = WriteCommand(str(index), self.__value)
             write_command.run()
 
