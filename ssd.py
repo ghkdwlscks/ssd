@@ -1,10 +1,34 @@
 import os
+import re
 import sys
 
 from console import Console
 from constant import *
 
-CMD_LIST = ['R', 'W', 'FR']
+CMD_LIST = [CMD_R, CMD_W]
+
+
+def can_convert_into_int(_target):
+    try:
+        int(_target)
+    except ValueError:
+        return False
+    return True
+
+
+def is_valid_lba(_lda):
+    if can_convert_into_int(_lda) and int(_lda) < NUM_LBA:
+        return True
+    else:
+        return False
+
+
+def is_valid_data(_data):
+    if re.fullmatch(r"0x[0-9A-F]{8}", _data):
+        return True
+    else:
+        return False
+
 
 class SSD:
     def __init__(self):
@@ -35,37 +59,49 @@ class SSD:
             self.read()
         elif self.cmd == CMD_W:
             self.write()
-        elif self.cmd == CMD_FR:
-            self.full_read()
-
-    def full_read(self):
-
-        try:
-            nand_data_list = self.__get_data_list_of_nand_file()
-        except:
-            self.refresh_nand()
-            nand_data_list = self.__get_data_list_of_nand_file()
-
-        self.console.write('\n'.join(nand_data_list))
 
     def read(self):
-        try:
-            nand_data_list = self.__get_data_list_of_nand_file()
-        except:
-            self.refresh_nand()
-            nand_data_list = self.__get_data_list_of_nand_file()
-
+        nand_data_list = [x[1] for x in self.__get_data_list_of_nand_file()]
         self.console.write(nand_data_list[self.lba])
 
-    def __get_data_list_of_nand_file(self):
+    '''
+    nand.txt를 읽어, list[[lba,data]]을 반환합니다.
+    '''
+
+    def __read_nand(self):
         result = []
-        with open(self.nand_file_path, 'r') as f:
-            line = f.readline()
-            while line:
-                lba, data = line.split()
-                result.append(data)
+        try:
+            with open(self.nand_file_path, 'r') as f:
                 line = f.readline()
+
+                while line:
+                    lba, data = line.strip().split()
+                    result.append([lba, data])
+                    line = f.readline()
+        except FileNotFoundError:
+            self.refresh_nand()
+            result = self.__read_nand()
         return result
+
+    def __get_data_list_of_nand_file(self) -> list[list]:
+        result = self.__read_nand()
+
+        # validation check 에러시, nand 초기화 후 read  재 진행.
+        if not self.__check_nand_validation(result):
+            self.refresh_nand()
+            result = self.__get_data_list_of_nand_file()
+
+        return result
+
+    def __check_nand_validation(self, nand_read_result):
+        if len(nand_read_result) != NUM_LBA:
+            return False
+        for _lba, _data in nand_read_result:
+            if is_valid_lba(_lba) and is_valid_data(_data):
+                continue
+            else:
+                return False
+        return True
 
     '''
     nand.txt에 write되는 형식
@@ -79,22 +115,12 @@ class SSD:
     '''
 
     def write(self):
-        try:
-            with open(self.nand_file_path, 'r') as f:
-                lines = f.readlines()
-        except:
-            self.refresh_nand()
-            with open(self.nand_file_path, 'r') as f:
-                lines = f.readlines()
+        nand_read_result = self.__get_data_list_of_nand_file()
 
-        if self.lba >= len(lines):
-            raise SystemError
-
-        new_line_content = f'{self.lba} {self.data}\n'
-        lines[self.lba] = new_line_content
+        nand_read_result[self.lba] = [self.lba, self.data]
 
         with open(self.nand_file_path, 'w') as f:
-            f.writelines(lines)
+            f.writelines([f'{_lba} {_data}\n' for _lba, _data in nand_read_result])
 
 
 if __name__ == "__main__":
