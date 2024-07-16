@@ -3,7 +3,7 @@ from unittest import TestCase
 from unittest.mock import Mock, patch
 
 from console import Console
-
+from constant import *
 
 class TestConsole(TestCase):
 
@@ -21,7 +21,7 @@ class TestConsole(TestCase):
     def test_read_print_output(self, mock_print):
         # Mock 설정
         self.sut.is_exist_result_file = Mock(return_value=True)
-        mock_value = '0x32991111'
+        mock_value = VALUE_0x32991111
         self.sut.read_result_file = Mock(return_value=mock_value)
         self.sut.read()
 

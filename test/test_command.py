@@ -3,11 +3,7 @@ from unittest import TestCase
 from unittest.mock import patch
 
 from command import WriteCommand, FullWriteCommand, HelpCommand, ReadCommand, FullReadCommand
-
-INDEX_0 = "0"
-INDEX_10 = "10"
-TEST_VALUE = "0xAAAABBBB"
-
+from constant import *
 
 class TestCommand(TestCase):
 
@@ -30,23 +26,23 @@ class TestCommand(TestCase):
     def test_fullread(self, mock_run):
         self.command = FullReadCommand()
         self.command.run()
-        self.assertEqual(100, mock_run.call_count)
+        self.assertEqual(NUM_LBA, mock_run.call_count)
 
     @patch('subprocess.run')
     def test_write_command_run(self, mock_run):
-        self.command = WriteCommand(INDEX_10, TEST_VALUE)
+        self.command = WriteCommand(INDEX_10, VALUE_0xAAAABBBB)
 
         self.command.run()
 
-        mock_run.assert_called_once_with(["python", "ssd.py", "W", INDEX_10, TEST_VALUE])
+        mock_run.assert_called_once_with(["python", "ssd.py", "W", INDEX_10, VALUE_0xAAAABBBB])
 
     @patch('subprocess.run')
     def test_full_write_command_run(self, mock_run):
-        self.command = FullWriteCommand(TEST_VALUE)
+        self.command = FullWriteCommand(VALUE_0xAAAABBBB)
 
         self.command.run()
 
-        self.assertEqual(100, mock_run.call_count)
+        self.assertEqual(NUM_LBA, mock_run.call_count)
 
     @patch('sys.stdout', new_callable=StringIO)
     def test_help_command_run(self, mock_stdout):
