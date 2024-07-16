@@ -94,7 +94,7 @@ class SSD:
         return result
 
     def __check_nand_validation(self, nand_read_result):
-        if len(nand_read_result) != 100:
+        if len(nand_read_result) != NUM_LBA:
             return False
         for _lba, _data in nand_read_result:
             if is_valid_lba(_lba) and is_valid_data(_data):
