@@ -5,25 +5,20 @@ class Console:
     def __init__(self):
         dir_path = os.path.dirname(__file__)
         self.file_path = os.path.join(dir_path, "output", "result.txt")
+        print(self.file_path)
 
     def is_exist_result_file(self):
         return os.path.exists(self.file_path)
 
     def read_result_file(self):
-        results = []
+        data = ""
         try:
             with open(self.file_path, 'r') as file:
-                for line in file:
-                    line = line.strip()
-                    index, value = line.split()
-                    results.append((int(index), value))
+                data = file.read()
+                data = data.strip()
         except:
             pass
-        return results
-
-    def print_result_file(self, result_file):
-        for data in result_file:
-            print(data[1])
+        return data
 
     def read(self):
         if not self.is_exist_result_file():
@@ -33,5 +28,5 @@ class Console:
         if len(data) == 0:
             return False
 
-        self.print_result_file(data)
+        print(data)
         return True
