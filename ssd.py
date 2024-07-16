@@ -4,7 +4,7 @@ import sys
 RESULT_FILE = '../output/result.txt'
 NAND_FILE = '../output/nand.txt'
 
-CMD_LIST = ['R', 'W']
+CMD_LIST = ['R', 'W', 'FR']
 
 
 class SSD:
@@ -37,6 +37,23 @@ class SSD:
             self.read()
         elif self.cmd == 'W':
             self.write()
+        elif self.cmd == 'FR':
+            self.full_read()
+
+    def full_read(self):
+        result = []
+        try:
+            with open(self.nand_file_path, 'r') as f:
+                line = f.readline()
+                while line:
+                    lba, data = line.split()
+                    result.append(data)
+                    line = f.readline()
+        except:
+            self.refresh_nand()
+
+        with open(self.result_file_path, 'w') as f:
+            f.write('\n'.join(result))
 
     def read(self):
         result = ''
