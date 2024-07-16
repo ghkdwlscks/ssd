@@ -23,4 +23,4 @@ class TestCommandRead(TestCase):
     def test_fullread(self, mock_run):
         fullread_command = FullReadCommand()
         fullread_command.run()
-        mock_run.assert_called_once_with(["python", 'ssd.py', 'FR'])
+        self.assertEqual(100, mock_run.call_count)
