@@ -14,8 +14,8 @@ class SSD:
         self.data = ''
         script_path = os.path.abspath(__file__)
         script_directory = os.path.dirname(script_path)
-        self.result_file_path = os.path.join(script_directory, os.getenv('RESULT_TXT_PATH', '/output/result.txt'))
-        self.nand_file_path = os.path.join(script_directory, os.getenv('NAND_TXT_PATH', '/output/nand.txt'))
+        self.result_file_path = os.path.join(script_directory, os.getenv('RESULT_TXT_PATH', 'output/result.txt'))
+        self.nand_file_path = os.path.join(script_directory, os.getenv('NAND_TXT_PATH', 'output/nand.txt'))
 
     def refresh_nand(self):
         with open(self.nand_file_path, 'w') as f:
@@ -27,7 +27,6 @@ class SSD:
             raise AttributeError
         if lba >= 100:
             raise AttributeError
-
         self.cmd = cmd
         self.lba = lba
         self.data = data
@@ -115,5 +114,6 @@ if __name__ == "__main__":
     if len(args) >= 4:
         data = args[3]
 
-    SSD().set_command(cmd, int(lba), data)
-    SSD().run()
+    ssd = SSD()
+    ssd.set_command(cmd, int(lba), data)
+    ssd.run()
