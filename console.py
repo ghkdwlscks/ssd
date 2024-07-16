@@ -30,3 +30,10 @@ class Console:
 
         print(data)
         return True
+
+    def write(self, data):
+        if not self.is_exist_result_file():
+            return False
+
+        with open(self.file_path, "w") as result_file:
+            result_file.write(data)
