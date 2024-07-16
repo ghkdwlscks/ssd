@@ -22,7 +22,7 @@ class SSD:
             for i in range(0, 100):
                 f.write(f'{i} 0x00000000\n')
 
-    def set_command(self, cmd, lba, data=None):
+    def set_command(self, cmd: str, lba: int, data: None or str = None):
         if cmd not in CMD_LIST:
             raise AttributeError
         if lba >= 100:
@@ -41,52 +41,59 @@ class SSD:
             self.full_read()
 
     def full_read(self):
-        result = []
+
         try:
-            with open(self.nand_file_path, 'r') as f:
-                line = f.readline()
-                while line:
-                    lba, data = line.split()
-                    result.append(data)
-                    line = f.readline()
+            nand_data_list = self.__get_data_list_of_nand_file()
         except:
             self.refresh_nand()
+            nand_data_list = self.__get_data_list_of_nand_file()
 
         with open(self.result_file_path, 'w') as f:
-            f.write('\n'.join(result))
+            f.write('\n'.join(nand_data_list))
 
     def read(self):
-        result = ''
         try:
-            with open(self.nand_file_path, 'r') as f:
-                line = f.readline()
-                while line:
-                    lba, data = line.split()
-                    if int(lba) == self.lba:
-                        result = data
-                        break
-                    line = f.readline()
+            nand_data_list = self.__get_data_list_of_nand_file()
         except:
             self.refresh_nand()
+            nand_data_list = self.__get_data_list_of_nand_file()
 
         with open(self.result_file_path, 'w') as f:
-            f.write(result)
-        print(f'{self.lba} read')
+            f.write(nand_data_list[self.lba])
 
+    def __get_data_list_of_nand_file(self):
+        result = []
+        with open(self.nand_file_path, 'r') as f:
+            line = f.readline()
+            while line:
+                lba, data = line.split()
+                result.append(data)
+                line = f.readline()
+        return result
+
+
+    '''
+    nand.txt에 write되는 형식
+    {lba} {data}
+    
+    ex)
+    0 0x0105AB55
+    1 0x020202AA
+    ....
+    99 0x0404012
+    '''
     def write(self):
-        with open(self.nand_file_path, 'r') as file:
-            lines = file.readlines()
+        with open(self.nand_file_path, 'r') as f:
+            lines = f.readlines()
 
-        # 수정할 줄 선택
-        if self.lba < len(lines):
-            line_to_modify = lines[self.lba]
+        if self.lba >= len(lines):
+            raise SystemError
 
-            new_line_content = f'{self.lba} {self.data}\n'
-            lines[self.lba] = new_line_content
+        new_line_content = f'{self.lba} {self.data}\n'
+        lines[self.lba] = new_line_content
 
-            # 파일을 쓰기 모드로 열어서 수정된 내용 쓰기
-            with open(self.nand_file_path, 'w') as file:
-                file.writelines(lines)
+        with open(self.nand_file_path, 'w') as f:
+            f.writelines(lines)
 
 
 if __name__ == "__main__":
