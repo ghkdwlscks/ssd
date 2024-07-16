@@ -4,7 +4,7 @@ import sys
 from console import Console
 
 CMD_LIST = ['R', 'W', 'FR']
-
+NUM_LBA = 100
 
 class SSD:
     def __init__(self):
@@ -18,13 +18,13 @@ class SSD:
 
     def refresh_nand(self):
         with open(self.nand_file_path, 'w') as f:
-            for i in range(0, 100):
+            for i in range(NUM_LBA):
                 f.write(f'{i} 0x00000000\n')
 
     def set_command(self, cmd: str, lba: int, data: None or str = None):
         if cmd not in CMD_LIST:
             raise AttributeError
-        if lba >= 100:
+        if lba >= NUM_LBA:
             raise AttributeError
         self.cmd = cmd
         self.lba = lba
