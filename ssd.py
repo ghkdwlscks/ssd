@@ -1,8 +1,7 @@
 import os
 import sys
 
-RESULT_FILE = '../output/result.txt'
-NAND_FILE = '../output/nand.txt'
+from console import Console
 
 CMD_LIST = ['R', 'W', 'FR']
 
@@ -14,8 +13,8 @@ class SSD:
         self.data = ''
         script_path = os.path.abspath(__file__)
         script_directory = os.path.dirname(script_path)
-        self.result_file_path = os.path.join(script_directory, os.getenv('RESULT_TXT_PATH', 'output/result.txt'))
         self.nand_file_path = os.path.join(script_directory, os.getenv('NAND_TXT_PATH', 'output/nand.txt'))
+        self.console = Console()
 
     def refresh_nand(self):
         with open(self.nand_file_path, 'w') as f:
@@ -47,8 +46,7 @@ class SSD:
             self.refresh_nand()
             nand_data_list = self.__get_data_list_of_nand_file()
 
-        with open(self.result_file_path, 'w') as f:
-            f.write('\n'.join(nand_data_list))
+        self.console.write('\n'.join(nand_data_list))
 
     def read(self):
         try:
@@ -57,8 +55,7 @@ class SSD:
             self.refresh_nand()
             nand_data_list = self.__get_data_list_of_nand_file()
 
-        with open(self.result_file_path, 'w') as f:
-            f.write(nand_data_list[self.lba])
+        self.console.write(nand_data_list[self.lba])
 
     def __get_data_list_of_nand_file(self):
         result = []
