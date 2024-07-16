@@ -47,7 +47,8 @@ class TestApp1(TestApp):
 class TestApp2(TestApp):
 
     def _validate(self) -> bool:
-        pass
+        answer = "0x12345678\n0x12345678\n0x12345678\n0x12345678\n0x12345678\n0x12345678"
+        return self.output.getvalue().strip() == answer
 
 
 def make_test_app(command: str) -> TestApp:
