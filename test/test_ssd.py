@@ -4,6 +4,7 @@ from unittest.mock import Mock
 
 from console import Console
 from ssd import SSD
+from constant import *
 
 
 class TestSSD(TestCase):
@@ -16,41 +17,43 @@ class TestSSD(TestCase):
         self.console.read.return_value = True
         self.nand_txt_file.side_effect = lambda x: '0xAB010105' if x == 5 else '0x00000000'
     def tearDown(self):
-        if 'NAND_TXT_PATH' in os.environ:
-            del os.environ['NAND_TXT_PATH']
-        if 'RESULT_TXT_PATH' in os.environ:
-            del os.environ['RESULT_TXT_PATH']
+        if NAND_TXT_PATH in os.environ:
+            del os.environ[NAND_TXT_PATH]
+        if RESULT_TXT_PATH in os.environ:
+            del os.environ[RESULT_TXT_PATH]
 
     def test_ssd_set_command(self):
-        self.sut.set_command('R', 5)
+        self.sut.set_command(CMD_R, INT_INDEX_5)
 
     def test_ssd_set_command_fail_out_of_lba_range(self):
         with self.assertRaises(AttributeError):
-            self.sut.set_command('R', 100)
+            self.sut.set_command(CMD_R, NUM_LBA)
 
     def test_ssd_set_command_wrong_cmd(self):
         with self.assertRaises(AttributeError):
-            self.sut.set_command('Read', 5)
+            self.sut.set_command('Read', INT_INDEX_5)
 
     def test_ssd_read_empty_nand(self):
         self.sut.refresh_nand()
-        self.sut.set_command('R', 5)
+        self.sut.set_command(CMD_R, INT_INDEX_5)
         self.sut.run()
         self.assertEqual(True, self.console.read())
+
 
     def test_ssd_write(self):
         self.sut.refresh_nand()
-        self.sut.set_command('W', 5, "0xAB010105")
+        self.sut.set_command(CMD_W, INT_INDEX_5, VALUE_0xAB010105)
         self.sut.run()
 
-        self.assertEqual('0xAB010105', self.nand_txt_file(5))
+        self.assertEqual(VALUE_0xAB010105, self.nand_txt_file(INT_INDEX_5))
 
     def test_ssd_write_and_read(self):
         self.sut.refresh_nand()
-        self.sut.set_command('W', 5, "0xAB010105")
+        self.sut.set_command(CMD_W, INT_INDEX_5, VALUE_0xAB010105)
         self.sut.run()
 
-        self.sut.set_command('R', 5)
+        self.sut.set_command(CMD_R, INT_INDEX_5)
         self.sut.run()
 
         self.assertEqual(True, self.console.read())
+

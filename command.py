@@ -3,7 +3,7 @@ import sys
 from abc import ABC, abstractmethod
 
 from console import Console
-
+from constant import *
 
 class Command(ABC):
     @abstractmethod
@@ -23,7 +23,7 @@ class ReadCommand(Command):
 
 class FullReadCommand(Command):
     def run(self):
-        for index in range(100):
+        for index in range(NUM_LBA):
             read_command = ReadCommand(str(index))
             read_command.run()
 
@@ -48,7 +48,7 @@ class FullWriteCommand(Command):
         self.__value = value
 
     def run(self):
-        for index in range(100):
+        for index in range(NUM_LBA):
             write_command = WriteCommand(str(index), self.__value)
             write_command.run()
 
@@ -76,15 +76,17 @@ class HelpCommand(Command):
 
 def make_command(command: str) -> Command:
     command = command.split()
-    if command[0] == "read":
+    command_type = command[0]
+
+    if command_type == "read":
         return ReadCommand(command[1])
-    if command[0] == 'write':
+    if command_type == 'write':
         return WriteCommand(command[1], command[2])
-    if command[0] == "help":
+    if command_type == "help":
         return HelpCommand()
-    if command[0] == "exit":
+    if command_type == "exit":
         return ExitCommand()
-    if command[0] == "fullread":
+    if command_type == "fullread":
         return FullReadCommand()
-    if command[0] == "fullwrite":
+    if command_type == "fullwrite":
         return FullWriteCommand(command[1])

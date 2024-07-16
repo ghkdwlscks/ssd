@@ -3,6 +3,7 @@ import re
 import sys
 
 from console import Console
+from constant import *
 
 CMD_LIST = ['R', 'W']
 
@@ -28,7 +29,6 @@ def is_valid_data(_data):
     else:
         return False
 
-
 class SSD:
     def __init__(self):
         self.cmd = ''
@@ -41,22 +41,22 @@ class SSD:
 
     def refresh_nand(self):
         with open(self.nand_file_path, 'w') as f:
-            for i in range(0, 100):
-                f.write(f'{i} 0x00000000\n')
+            for i in range(NUM_LBA):
+                f.write(f'{i} {VALUE_DEFAULT}\n')
 
     def set_command(self, cmd: str, lba: int, data: None or str = None):
         if cmd not in CMD_LIST:
             raise AttributeError
-        if lba >= 100:
+        if lba >= NUM_LBA:
             raise AttributeError
         self.cmd = cmd
         self.lba = lba
         self.data = data
 
     def run(self):
-        if self.cmd == 'R':
+        if self.cmd == CMD_R:
             self.read()
-        elif self.cmd == 'W':
+        elif self.cmd == CMD_W:
             self.write()
 
     def read(self):
@@ -92,7 +92,6 @@ class SSD:
         return result
 
     def __check_nand_validation(self, read_result):
-        # nand 데이터 유효성 검사
         if len(read_result) != 100:
             raise ValueError
         for _lba, _data in read_result:

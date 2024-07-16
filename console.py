@@ -10,29 +10,24 @@ class Console:
         return os.path.exists(self.file_path)
 
     def read_result_file(self):
-        data = ""
         try:
             with open(self.file_path, 'r') as file:
-                data = file.read()
-                data = data.strip()
-        except:
-            pass
+                data = file.read().strip()
+        except FileNotFoundError:
+            data = ""
         return data
 
     def read(self):
         if not self.is_exist_result_file():
-            return False
+            return
+        if not self.read_result_file():
+            return
 
-        data = self.read_result_file()
-        if len(data) == 0:
-            return False
-
-        print(data)
-        return True
+        print(self.read_result_file())
 
     def write(self, data):
         if not self.is_exist_result_file():
-            return False
+            return
 
         with open(self.file_path, "w") as result_file:
             result_file.write(data)

@@ -1,6 +1,5 @@
 from abc import ABC, abstractmethod
 
-
 class TestApp(ABC):
     def __init__(self, filename: str) -> None:
         self.filename = filename
@@ -11,29 +10,29 @@ class TestApp(ABC):
 
     def run(self):
         for command in self.commands:
-            output = self.__run_command(command)
-            if not self.__validate_result(command, output):
-                print(f"{self.__class__.__name__} failed")
-                return
-        print(f"{self.__class__.__name__} success")
+            self.__run_command(command)
+        if self.__validate():
+            print(f"{self.__class__.__name__} passed")
+        else:
+            print(f"{self.__class__.__name__} failed")
 
     def __run_command(self, command: str) -> str:
         pass
 
     @abstractmethod
-    def __validate_result(self, command: str, output: str) -> bool:
+    def __validate(self) -> bool:
         raise NotImplementedError
 
 
 class TestApp1(TestApp):
 
-    def __validate_result(self, command: str, output: str) -> bool:
+    def __validate(self) -> bool:
         pass
 
 
 class TestApp2(TestApp):
 
-    def __validate_result(self, command: str, output: str) -> bool:
+    def __validate(self) -> bool:
         pass
 
 
