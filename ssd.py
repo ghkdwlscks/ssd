@@ -5,6 +5,8 @@ import sys
 from console import Console
 from constant import *
 
+CMD_LIST = ['R', 'W']
+
 
 def can_convert_into_int(_target):
     try:
@@ -15,7 +17,7 @@ def can_convert_into_int(_target):
 
 
 def is_valid_lba(_lda):
-    if can_convert_into_int(_lda) and int(_lda) < NUM_LBA:
+    if can_convert_into_int(_lda) and int(_lda) < 100:
         return True
     else:
         return False
@@ -65,7 +67,6 @@ class SSD:
     '''
     nand.txt를 읽어, list[[lba,data]]을 반환합니다.
     '''
-
     def __read_nand(self):
         result = []
         try:
@@ -76,25 +77,26 @@ class SSD:
                     lba, data = line.strip().split()
                     result.append([lba, data])
                     line = f.readline()
-        except FileNotFoundError:
+        except:
             self.refresh_nand()
             result = self.__read_nand()
         return result
 
-    def __get_data_list_of_nand_file(self) -> list[list]:
+    # validation check 에러시, nand 초기화 후 read 진행.
+    def __get_data_list_of_nand_file(self) -> list[list[int, str]]:
         result = self.__read_nand()
 
-        # validation check 에러시, nand 초기화 후 read  재 진행.
         if not self.__check_nand_validation(result):
             self.refresh_nand()
-            result = self.__get_data_list_of_nand_file()
+            self.__get_data_list_of_nand_file()
 
         return result
 
-    def __check_nand_validation(self, nand_read_result):
-        if len(nand_read_result) != 100:
-            return False
-        for _lba, _data in nand_read_result:
+    def __check_nand_validation(self, read_result):
+        # nand 데이터 유효성 검사
+        if len(read_result) != 100:
+            raise ValueError
+        for _lba, _data in read_result:
             if is_valid_lba(_lba) and is_valid_data(_data):
                 continue
             else:
@@ -113,12 +115,13 @@ class SSD:
     '''
 
     def write(self):
-        nand_read_result = self.__get_data_list_of_nand_file()
+        lines = self.__read_nand()
 
-        nand_read_result[self.lba] = [self.lba, self.data]
+        new_line_content = [self.lba, self.data]
+        lines[self.lba] = new_line_content
 
         with open(self.nand_file_path, 'w') as f:
-            f.writelines([f'{_lba} {_data}\n' for _lba, _data in nand_read_result])
+            f.writelines([f'{_lba} {_data}\n' for _lba, _data in lines])
 
 
 if __name__ == "__main__":
