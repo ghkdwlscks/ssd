@@ -30,7 +30,7 @@ class TestCommand(TestCase):
     def test_fullread(self, mock_run):
         self.command = FullReadCommand()
         self.command.run()
-        mock_run.assert_called_once_with(["python", 'ssd.py', 'FR'])
+        self.assertEqual(100, mock_run.call_count)
 
     @patch('subprocess.run')
     def test_write_command_run(self, mock_run):
