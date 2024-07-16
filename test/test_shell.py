@@ -26,19 +26,19 @@ class TestShell(TestCase):
 
     def test_parse_command_with_invalid_read_and_write_commands(self):
         with self.assertRaises(ValueError):
-            self.shell.parse_command("ssd R")
+            self.shell.parse_command("read")
         with self.assertRaises(ValueError):
-            self.shell.parse_command("ssd R 0x1")
+            self.shell.parse_command("read 0x1")
         with self.assertRaises(ValueError):
-            self.shell.parse_command("ssd R -1")
+            self.shell.parse_command("read -1")
         with self.assertRaises(ValueError):
-            self.shell.parse_command("ssd R 100")
+            self.shell.parse_command("read 100")
         with self.assertRaises(ValueError):
-            self.shell.parse_command("ssd W")
+            self.shell.parse_command("write")
         with self.assertRaises(ValueError):
-            self.shell.parse_command("ssd W 1234567890")
+            self.shell.parse_command("write 1234567890")
         with self.assertRaises(ValueError):
-            self.shell.parse_command("ssd W 0xXXXXXXXX")
+            self.shell.parse_command("write 0xXXXXXXXX")
 
     def test_help_and_exit_commands(self):
         try:

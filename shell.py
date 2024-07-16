@@ -21,6 +21,7 @@ class Shell:
 
     @staticmethod
     def parse_command(command: str) -> Command:
+        command = command.strip()
         if re.fullmatch(r"read [0-9]{1,2}", command):
             return make_command(command)
         if re.fullmatch(r"write [0-9]{1,2} 0x[0-9A-F]{8}", command):
