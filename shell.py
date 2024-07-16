@@ -1,6 +1,7 @@
 import re
 
-from command import Command, FullReadCommand, make_command, ReadCommand
+from command import Command, make_command
+from test_app import TestApp, make_test_app
 
 
 class Shell:
@@ -15,7 +16,7 @@ class Shell:
             command.run()
 
     @staticmethod
-    def parse_command(command: str) -> Command:
+    def parse_command(command: str) -> Command or TestApp:
         command = command.strip()
         if re.fullmatch(r"read [0-9]{1,2}", command):
             return make_command(command)
@@ -29,6 +30,8 @@ class Shell:
             return make_command(command)
         if re.fullmatch(r"fullwrite 0x[0-9A-F]{8}", command):
             return make_command(command)
+        if command in ["testapp1", "testapp2"]:
+            return make_test_app(command)
 
         raise ValueError
 
