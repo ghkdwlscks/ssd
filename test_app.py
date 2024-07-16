@@ -1,12 +1,14 @@
-from abc import ABC, abstractmethod
+from command import make_command
 
-class TestApp(ABC):
+
+class TestApp:
     def __init__(self, filename: str) -> None:
         self.filename = filename
         self.commands = self.__read_script_file()
 
     def __read_script_file(self) -> list[str]:
-        pass
+        with open(self.filename) as file:
+            return [line.strip() for line in file]
 
     def run(self):
         for command in self.commands:
@@ -16,12 +18,13 @@ class TestApp(ABC):
         else:
             print(f"{self.__class__.__name__} failed")
 
-    def __run_command(self, command: str) -> str:
-        pass
+    @staticmethod
+    def __run_command(command: str) -> None:
+        command = make_command(command.strip())
+        command.run()
 
-    @abstractmethod
     def __validate(self) -> bool:
-        raise NotImplementedError
+        pass
 
 
 class TestApp1(TestApp):
@@ -36,8 +39,8 @@ class TestApp2(TestApp):
         pass
 
 
-def run_test_app(command: str) -> None:
+def make_test_app(command: str) -> TestApp:
     if command == "testapp1":
-        TestApp1("test_app1.txt").run()
+        return TestApp1("script/test_app1.txt")
     elif command == "testapp2":
-        TestApp2("test_app2.txt").run()
+        return TestApp2("script/test_app2.txt")
