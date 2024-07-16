@@ -7,7 +7,7 @@ from command import WriteCommand, FullWriteCommand, HelpCommand, ReadCommand, Fu
 INDEX_0 = "0"
 INDEX_10 = "10"
 TEST_VALUE = "0xAAAABBBB"
-
+NUM_LBA = 100
 
 class TestCommand(TestCase):
 
@@ -30,7 +30,7 @@ class TestCommand(TestCase):
     def test_fullread(self, mock_run):
         self.command = FullReadCommand()
         self.command.run()
-        self.assertEqual(100, mock_run.call_count)
+        self.assertEqual(NUM_LBA, mock_run.call_count)
 
     @patch('subprocess.run')
     def test_write_command_run(self, mock_run):
@@ -46,7 +46,7 @@ class TestCommand(TestCase):
 
         self.command.run()
 
-        self.assertEqual(100, mock_run.call_count)
+        self.assertEqual(NUM_LBA, mock_run.call_count)
 
     @patch('sys.stdout', new_callable=StringIO)
     def test_help_command_run(self, mock_stdout):
