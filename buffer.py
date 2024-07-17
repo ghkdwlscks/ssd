@@ -20,8 +20,15 @@ class Buffer:
             buffer[i] = {"cmd": cmd, "lba": lba, "data": data}
         return buffer
 
-    def add(self, command: Command) -> None:
-        pass  # TODO: convert Command object to BufferEntry Object and append to self.__buffer
+    def add(self, cmd, lba, data) -> None:
+        entry = {"cmd": cmd, "lba": int(lba), "data": data}
+        if cmd == "E":
+            data = int(data)
+        self.__buffer.append(entry)
+        # TODO: Call optimize functions
+        if len(self.__buffer) >= 10:
+            self.flush()
+
 
     def flush(self) -> None:
         for cmd_lst in self.__buffer:
