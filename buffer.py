@@ -35,12 +35,11 @@ class Buffer:
 
 
     def flush(self) -> None:
-        for cmd_lst in self.__buffer:
-            cmd_type = cmd_lst[0]
-            if cmd_type == CMD_W:
-                WriteCommand(**cmd_lst[1:])
-            elif cmd_type == CMD_E:
-                EraseCommand(**cmd_lst[1:])
+        for entry in self.__buffer:
+            if entry['cmd'] == CMD_W:
+                WriteCommand(str(entry["lba"]), entry["data"])
+            elif entry['cmd'] == CMD_E:
+                EraseCommand(str(entry["lba"]), str(entry["data"]))
             else:
                 ValueError("wrong command in buffer")
 
