@@ -47,21 +47,21 @@ class TestCommand(TestCase):
     @patch('sys.stdout', new_callable=StringIO)
     def test_help_command_run(self, mock_stdout):
         expected_output = """
-        - write: lba에 데이터를 기록합니다.
-            write {{lba}} {{data}}
+    - write: lba에 데이터를 기록합니다.
+        write {{lba}} {{data}}
 
-        - read: lba에 작성한 데이터를 읽습니다.
-            read {{lba}}
+    - read: lba에 작성한 데이터를 읽습니다.
+        read {{lba}}
 
-        - exit: Shell을 종료합니다.
+    - exit: Shell을 종료합니다.
 
-        - help: 도움말을 표시합니다.
+    - help: 도움말을 표시합니다.
 
-        - fullwrite: 모든 lba에 해당 데이터를 기록합니다.
-            fullwrite {{data}}
+    - fullwrite: 모든 lba에 해당 데이터를 기록합니다.
+        fullwrite {{data}}
 
-        - fullread: 모든 lba 데이터를 읽어 화면에 표시 합니다.
-        """
+    - fullread: 모든 lba 데이터를 읽어 화면에 표시 합니다.
+    """
         self.command = HelpCommand()
 
         self.command.run()

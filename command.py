@@ -16,7 +16,7 @@ class Command(ABC):
     def get_command_type():
         pass
 
-    def __init__(self, data1: str or None, data2: str or None):
+    def __init__(self, data1: str or None = None, data2: str or None = None):
         pass
 
 
@@ -25,7 +25,7 @@ class ReadCommand(Command):
     def get_command_type():
         return "read"
 
-    def __init__(self, data1: str, data2: str or None):
+    def __init__(self, data1: str or None = None, data2: str or None = None):
         super().__init__(data1, data2)
         self.index = data1
         self.value = data2
@@ -41,7 +41,7 @@ class FullReadCommand(Command):
     def get_command_type():
         return "fullread"
 
-    def __init__(self, data1: str or None, data2: str or None):
+    def __init__(self, data1: str or None = None, data2: str or None = None):
         super().__init__(data1, data2)
 
     def run(self):
@@ -55,7 +55,7 @@ class WriteCommand(Command):
     def get_command_type():
         return "write"
 
-    def __init__(self, data1: str, data2: str):
+    def __init__(self, data1: str or None = None, data2: str or None = None):
         super().__init__(data1, data2)
         self.__index = data1
         self.__value = data2
@@ -70,7 +70,7 @@ class FullWriteCommand(Command):
     def get_command_type():
         return "fullwrite"
 
-    def __init__(self, data1: str or None, data2: str or None):
+    def __init__(self, data1: str or None = None, data2: str or None = None):
         super().__init__(data1, data2)
         self.__value = data1
 
@@ -120,7 +120,7 @@ class EraseCommand(Command):
     def get_command_type():
         return "erase"
 
-    def __init__(self, data1, data2):
+    def __init__(self, data1: str or None = None, data2: str or None = None):
         super().__init__(data1, data2)
         self.lba = int(data1)
         self.size = int(data2)
@@ -144,7 +144,7 @@ class EraseRangeCommand(Command):
     def get_command_type():
         return "erase_range"
 
-    def __init__(self, data1, data2):
+    def __init__(self, data1: str or None = None, data2: str or None = None):
         super().__init__(data1, data2)
         self.start_lba = int(data1)
         self.end_lba = int(data2)

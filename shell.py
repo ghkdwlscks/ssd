@@ -26,7 +26,7 @@ class Shell:
     def parse_command(self, command: str) -> Command or TestApp:
         command = command.strip()
         if self.is_ssd_command(command):
-            return ShellCommandFactory().create_command(command)
+            return ShellCommandFactory(command).create_command()
         else:
             try:
                 return TestApp(command)

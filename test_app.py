@@ -55,7 +55,7 @@ class TestApp:
 
     @staticmethod
     def _run_command(command: str) -> None:
-        command = ShellCommandFactory().create_command(command.strip())
+        command = ShellCommandFactory(command.strip()).create_command()
         command.run()
 
     def _validate(self) -> bool:
