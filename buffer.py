@@ -25,12 +25,18 @@ class Buffer:
         self.__buffer = self.load()
 
     @staticmethod
-    def load() -> list[list[str]]:
+    def load() -> list[dict]:
         try:
-            with open("buffer.txt", 'r') as file:
+            with open("output/buffer.txt", 'r') as file:
                 buffer = [line.strip().split() for line in file]
         except FileNotFoundError:
             return []
+        for i, entry in enumerate(buffer):
+            if entry[0] == "W":
+                buffer[i] = {"cmd": "W", "addr": entry[1], "value": entry[2]}
+            elif entry[0] == "E":
+                buffer[i] = {"cmd": "E", "addr": entry[1:]}
+            print(buffer[i])
         return buffer
 
     def add(self, command: Command) -> None:
@@ -43,3 +49,5 @@ class Buffer:
 
     def check_if_read_available(self, lba: int) -> bool:
         pass  # TODO: check if readable from buffer
+
+buffer = Buffer()
