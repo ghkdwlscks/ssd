@@ -1,9 +1,10 @@
 import subprocess
 import sys
 from abc import ABC, abstractmethod
-
 from console import Console
 from constant import *
+from logger import Logger
+
 
 
 class Command(ABC):
@@ -16,14 +17,21 @@ class ReadCommand(Command):
     def __init__(self, index: str):
         self.index = index
         self.console = Console()
+        self.logger = Logger()
 
     def run(self):
+        self.logger.log(self, "run()", "ReadCommand 실행")
         subprocess.run(["python", "ssd.py", "R", self.index])
         self.console.read()
 
 
 class FullReadCommand(Command):
+
+    def __init__(self):
+        self.logger = Logger()
+
     def run(self):
+        self.logger.log(self, "run()", "FullReadCommand 실행")
         for index in range(NUM_LBA):
             read_command = ReadCommand(str(index))
             read_command.run()
@@ -31,10 +39,12 @@ class FullReadCommand(Command):
 
 class WriteCommand(Command):
     def __init__(self, index: str, value: str):
+        self.logger = Logger()
         self.__index = index
         self.__value = value
 
     def run(self):
+        self.logger.log(self, "run()", "WriteCommand 실행")
         subprocess.run(["python", "ssd.py", "W", self.__index, self.__value])
 
 
@@ -42,21 +52,30 @@ class FullWriteCommand(Command):
 
     def __init__(self, value: str):
         self.__value = value
+        self.logger = Logger()
 
     def run(self):
         for index in range(NUM_LBA):
+            self.logger.log(self, "run()", "FullWriteCommand 실행")
             write_command = WriteCommand(str(index), self.__value)
             write_command.run()
 
 
 class ExitCommand(Command):
+    def __init__(self):
+        self.logger = Logger()
+
     def run(self):
+        self.logger.log(self, "run()", "exit 실행")
         sys.exit()
 
 
 class HelpCommand(Command):
+    def __init__(self):
+        self.logger = Logger()
 
     def run(self):
+        self.logger.log(self, "run()", "help 실행")
         print("""
         - write: lba에 데이터를 기록합니다.
             write {{lba}} {{data}}
