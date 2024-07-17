@@ -15,12 +15,15 @@ class Singleton(type):
 
 
 class Logger(metaclass=Singleton):
+    LOG_DIR = 'log'
+
     def __init__(self):
         self.logger = logging.getLogger('SingletonLogger')
         self.logger.setLevel(logging.DEBUG)
         log_format = logging.Formatter('[%(asctime)s] %(message)s', datefmt='%y.%m.%d %H:%M')
 
-        self.handler = RotatingFileHandler('latest.log', maxBytes=10240, backupCount=1, encoding='utf-8')  # 10kb 제한
+        log_path = os.path.join(self.LOG_DIR, 'latest.log')
+        self.handler = RotatingFileHandler(log_path, maxBytes=10240, backupCount=1, encoding='utf-8')  # 10kb 제한
         self.handler.setFormatter(log_format)
         self.logger.handlers = []
         self.logger.addHandler(self.handler)
@@ -33,9 +36,10 @@ class Logger(metaclass=Singleton):
         self.rotate_log_files()
 
     def rotate_log_files(self):
-        if os.path.exists('latest.log.1'):
+        log_path = os.path.join(self.LOG_DIR, 'latest.log')
+        if os.path.exists(log_path + '.1'):
             timestamp = datetime.now().strftime('%y%m%d_%H%M%S')
-            os.rename('latest.log.1', f'until_{timestamp}.log')
+            os.rename(log_path + '.1', os.path.join(self.LOG_DIR, f'until_{timestamp}.log'))
             self.compress_old_logs()
 
     def compress_old_logs(self):
@@ -51,8 +55,9 @@ class Logger(metaclass=Singleton):
             @functools.wraps(func)
             def wrapper_logger(*args, **kwargs):
                 func_name = func.__name__
-                cls().log(func_name, message)
-                return func(*args, **kwargs)
+                result = func(*args, **kwargs)
+                cls().log(func_name, f'{message} - 반환값: {result}')
+                return result
 
             return wrapper_logger
 
