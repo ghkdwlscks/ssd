@@ -56,7 +56,7 @@ class Buffer:
             file.write('')
 
     def optimize_merge_sequence_erase(self):
-        if len(self.__buffer): return
+        if len(self.__buffer) < 2: return
 
         before, after = self.__buffer[-2], self.__buffer[-1]
 
