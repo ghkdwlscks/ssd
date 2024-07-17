@@ -1,3 +1,4 @@
+# Command
 write 0 0xAAAABBBB
 write 0 0xAAAABBBB
 write 0 0xAAAABBBB
@@ -190,3 +191,10 @@ read 2
 read 3
 read 4
 read 5
+# Answer
+0x12345678
+0x12345678
+0x12345678
+0x12345678
+0x12345678
+0x12345678
