@@ -2,6 +2,7 @@ import re
 import sys
 
 from command import Command, make_command
+from logger import Logger
 from test_app import TestApp
 
 
@@ -12,17 +13,21 @@ class Shell:
             return
         with open(self.run_list_file) as file:
             self.scripts = [line.strip() for line in file]
+        self.logger = Logger()
 
     def run(self):
+        self.logger.log(self, "run()", "Shell 실행")
         while True:
             try:
                 command = self.parse_command(input("$ "))
             except ValueError:
                 print("INVALID COMMAND")
+                self.logger.log(self, "run()", "INVALID COMMAND 발생")
                 continue
             command.run()
 
     def parse_command(self, command: str) -> Command or TestApp:
+        self.logger.log(self, "parse_command()", "command 파싱")
         command = command.strip()
         if self.is_ssd_command(command):
             return make_command(command)
@@ -30,6 +35,7 @@ class Shell:
             try:
                 return TestApp(command)
             except FileNotFoundError:
+                self.logger.log(self, "parse_command()", "파싱 실패 ValueError 발생")
                 raise ValueError
 
     @staticmethod
