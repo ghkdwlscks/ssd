@@ -5,6 +5,7 @@ from abc import ABC, abstractmethod
 from console import Console
 from constant import *
 
+
 class Command(ABC):
     @abstractmethod
     def run(self):
@@ -74,6 +75,37 @@ class HelpCommand(Command):
         """)
 
 
+class EraseCommand(Command):
+
+    def __init__(self, _lba, _size):
+        self.lba = int(_lba)
+        self.size = int(_size)
+
+    def run(self):
+        if self.size <= 10:
+            subprocess.run(["python", "ssd.py", "E", str(self.lba), str(self.size)])
+            return
+
+        left_size = self.size
+        start_address = self.lba
+        while left_size // 10:
+            subprocess.run(["python", "ssd.py", "E", str(start_address), str(10)])
+            start_address += 10
+            left_size -= 10
+        subprocess.run(["python", "ssd.py", "E", str(start_address), str(left_size)])
+
+
+class EraseRangeCommand(Command):
+    def __init__(self, _start_lba, _end_lba):
+        self.start_lba = int(_start_lba)
+        self.end_lba = int(_end_lba)
+
+    def run(self):
+        if self.end_lba <= self.start_lba:
+            return
+        subprocess.run(["python", "ssd.py", "E", str(self.start_lba), str(self.end_lba - self.start_lba)])
+
+
 def make_command(command: str) -> Command:
     command = command.split()
     command_type = command[0]
@@ -90,3 +122,7 @@ def make_command(command: str) -> Command:
         return FullReadCommand()
     if command_type == "fullwrite":
         return FullWriteCommand(command[1])
+    if command_type == "erase":
+        return EraseCommand(command[1], command[2])
+    if command_type == "erase_range":
+        return EraseRangeCommand(command[1], command[2])
