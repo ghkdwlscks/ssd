@@ -1,23 +1,5 @@
-from abc import ABC
-
 from command import Command
 from constant import *
-
-
-class BufferEntry(ABC):
-    pass
-
-
-class ReadEntry(BufferEntry):
-    pass
-
-
-class WriteEntry(BufferEntry):
-    pass
-
-
-class EraseEntry(BufferEntry):
-    pass
 
 
 class Buffer:
@@ -32,11 +14,10 @@ class Buffer:
         except FileNotFoundError:
             return []
         for i, entry in enumerate(buffer):
-            if entry[0] == "W":
-                buffer[i] = {"cmd": "W", "addr": entry[1], "value": entry[2]}
-            elif entry[0] == "E":
-                buffer[i] = {"cmd": "E", "addr": entry[1:]}
-            print(buffer[i])
+            cmd, lba, data = entry[0], int(entry[1]), entry[2]
+            if cmd == "E":
+                data = int(data)
+            buffer[i] = {"cmd": cmd, "lba": lba, "data": data}
         return buffer
 
     def add(self, command: Command) -> None:
@@ -49,5 +30,3 @@ class Buffer:
 
     def check_if_read_available(self, lba: int) -> bool:
         pass  # TODO: check if readable from buffer
-
-buffer = Buffer()
