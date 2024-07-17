@@ -1,23 +1,5 @@
-from abc import ABC
-
 from command import Command, WriteCommand, EraseCommand
 from constant import *
-
-
-class BufferEntry(ABC):
-    pass
-
-
-class ReadEntry(BufferEntry):
-    pass
-
-
-class WriteEntry(BufferEntry):
-    pass
-
-
-class EraseEntry(BufferEntry):
-    pass
 
 
 class Buffer:
@@ -32,18 +14,16 @@ class Buffer:
         except FileNotFoundError:
             return []
         for i, entry in enumerate(buffer):
-            if entry[0] == "W":
-                buffer[i] = {"cmd": "W", "addr": entry[1], "value": entry[2]}
-            elif entry[0] == "E":
-                buffer[i] = {"cmd": "E", "addr": entry[1:]}
-            print(buffer[i])
+            cmd, lba, data = entry[0], int(entry[1]), entry[2]
+            if cmd == "E":
+                data = int(data)
+            buffer[i] = {"cmd": cmd, "lba": lba, "data": data}
         return buffer
 
     def add(self, command: Command) -> None:
         pass  # TODO: convert Command object to BufferEntry Object and append to self.__buffer
 
     def flush(self) -> None:
-        # TODO: flush and update SSD
         for cmd_lst in self.__buffer:
             cmd_type = cmd_lst[0]
             if cmd_type == CMD_W:
@@ -60,5 +40,3 @@ class Buffer:
 
     def check_if_read_available(self, lba: int) -> bool:
         pass  # TODO: check if readable from buffer
-
-buffer = Buffer()
