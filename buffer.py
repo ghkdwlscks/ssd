@@ -21,13 +21,15 @@ class Buffer:
         return buffer
 
     def add(self, cmd, lba, data) -> None:
+        if len(self.__buffer) >= 10:
+            self.flush()
+
         entry = {"cmd": cmd, "lba": int(lba), "data": data}
         if cmd == "E":
             data = int(data)
         self.__buffer.append(entry)
         # TODO: Call optimize functions
-        if len(self.__buffer) >= 10:
-            self.flush()
+
         with open("output/buffer.txt", "w") as file:
             for entry in self.__buffer:
                 file.write(f"{entry['cmd']} {entry['lba']} {entry['data']}\n")
@@ -47,6 +49,32 @@ class Buffer:
         with open("output/buffer.txt", 'w') as file:
             file.write('')
 
+    def optimize_merge_sequence_erase(self):
+        before, after = self.__buffer[-2], self.__buffer[-1]
+
+        if before['cmd'] != CMD_E or after['cmd'] != CMD_E:
+            return
+
+        before_arr = set(range(before['lba'], before['lba'] + before['data']))
+        after_arr = set(range(after['lba'], after['lba'] + after['data']))
+        new_arr = list(before_arr | after_arr)
+        sorted_arr = sorted(new_arr)
+
+        if self.is_consecutive(new_arr):
+            self.__buffer.pop(-1)
+            self.__buffer.pop(-1)
+            self.add('E', sorted_arr[0], len(sorted_arr))
+
+    
+
+
+
+
+    def is_consecutive(self, sorted_arr):
+        for i in range(1, len(sorted_arr)):
+            if sorted_arr[i] != sorted_arr[i-1] +1:
+                return False
+        return True
 
 
     def check_if_read_available(self, lba: int):
