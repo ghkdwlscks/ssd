@@ -5,6 +5,7 @@ from constant import *
 class Buffer:
     def __init__(self):
         self.__buffer = self.load()
+        print(self.__buffer)
 
     @staticmethod
     def load() -> list[dict]:
@@ -45,5 +46,20 @@ class Buffer:
             file.write('')
 
 
-    def check_if_read_available(self, lba: int) -> bool:
-        pass  # TODO: check if readable from buffer
+    def check_if_read_available(self, lba: int):
+
+        for buffer_cmd in self.__buffer[::-1]:
+            addr, value = self.__get_addr_and_value(buffer_cmd)
+            if lba in addr:
+                return value
+
+        return None
+
+    def __get_addr_and_value(self, buffer_cmd: dict):
+        if buffer_cmd['cmd'] == 'W':
+            return [buffer_cmd['lba']], buffer_cmd['data']
+        elif buffer_cmd['cmd'] == 'E':
+            start_addr = buffer_cmd['lba']
+            end_addr = buffer_cmd['lba'] + int(buffer_cmd['data'])
+
+            return list(range(start_addr, end_addr)), '0x00000000'
