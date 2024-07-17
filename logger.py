@@ -15,7 +15,7 @@ class Singleton(type):
 
 
 class Logger(metaclass=Singleton):
-    LOG_DIR = 'log'
+    LOG_DIR = './/log'
 
     def __init__(self):
         self.logger = logging.getLogger('SingletonLogger')
@@ -30,8 +30,8 @@ class Logger(metaclass=Singleton):
 
         self.compress_old_logs()
 
-    def log(self, func_name, message):
-        func_name_padded = f"{func_name}()".ljust(30)
+    def log(self, instance, func_name, message):
+        func_name_padded = f"{instance.__class__.__name__}.{func_name}()".ljust(50)
         self.logger.info(f'{func_name_padded}: {message}')
         self.rotate_log_files()
 
@@ -43,22 +43,9 @@ class Logger(metaclass=Singleton):
             self.compress_old_logs()
 
     def compress_old_logs(self):
-        logs = [f for f in os.listdir('.') if f.startswith('until_') and f.endswith('.log')]
+        logs = [f for f in os.listdir(self.LOG_DIR) if f.startswith('until_') and f.endswith('.log')]
         if len(logs) > 1:
             logs.sort()
             oldest_log = logs[0]
+            oldest_log = os.path.join(self.LOG_DIR, oldest_log)
             os.rename(oldest_log, oldest_log.replace('.log', '.zip'))
-
-    @classmethod
-    def logger(cls, message):
-        def decorator(func):
-            @functools.wraps(func)
-            def wrapper_logger(*args, **kwargs):
-                func_name = func.__name__
-                result = func(*args, **kwargs)
-                cls().log(func_name, f'{message} - 반환값: {result}')
-                return result
-
-            return wrapper_logger
-
-        return decorator
