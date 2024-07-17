@@ -40,7 +40,7 @@ class SSD:
 if __name__ == "__main__":
     try:
         ssd = SSD()
-        ssd.set_command(' '.join(sys.argv))
+        ssd.set_command(' '.join(sys.argv[1:]))
         ssd.run()
     except Exception as error:
         print(error)
