@@ -5,8 +5,6 @@ import sys
 from console import Console
 from constant import *
 
-CMD_LIST = [CMD_R, CMD_W]
-
 
 def can_convert_into_int(_target):
     try:
@@ -59,6 +57,11 @@ class SSD:
             self.read()
         elif self.cmd == CMD_W:
             self.write()
+        elif self.cmd == CMD_E:
+            self.erase()
+
+    def erase(self):
+        pass
 
     def read(self):
         nand_data_list = [x[1] for x in self.__get_data_list_of_nand_file()]
