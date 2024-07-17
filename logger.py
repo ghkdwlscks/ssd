@@ -14,7 +14,6 @@ class Singleton(type):
 class Logger(metaclass=Singleton):
     LOG_DIR = './/log'
     LOG_FILE = LOG_DIR + '//latest.log'
-    ROTATE_SIZE = 3
     MAX_SIZE = 10240
     ENCODING = 'utf-8'
 
@@ -30,7 +29,8 @@ class Logger(metaclass=Singleton):
 
     def log(self, instance, func_name, message):
         timestamp = datetime.now().strftime("%y.%m.%d %H:%M")
-        log_message = f"[{timestamp}] {instance.__class__.__name__}.{func_name}:{message.rjust(30)}\n"
+        formatted_function_name = ("[" + timestamp + "]" + instance.__class__.__name__ + "." + func_name).ljust(70)
+        log_message = f"[{formatted_function_name}:{message}\n"
         self.logging(log_message)
 
     def logging(self, log_message):
