@@ -5,7 +5,6 @@ from constant import *
 class Buffer:
     def __init__(self):
         self.__buffer = self.load()
-        print(self.__buffer)
 
     @staticmethod
     def load() -> list[dict]:
@@ -31,7 +30,7 @@ class Buffer:
             self.flush()
         with open("output/buffer.txt", "w") as file:
             for entry in self.__buffer:
-                file.write(f"{entry[0]} {entry[1]} {entry[2]}\n")
+                file.write(f"{entry['cmd']} {entry['lba']} {entry['data']}\n")
 
 
     def flush(self) -> None:
@@ -44,8 +43,10 @@ class Buffer:
                 ValueError("wrong command in buffer")
 
         # erase buffer.txt
+        self.__buffer = list()
         with open("output/buffer.txt", 'w') as file:
             file.write('')
+
 
 
     def check_if_read_available(self, lba: int):
