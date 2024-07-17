@@ -21,6 +21,7 @@ class Buffer:
         return buffer
 
     def add(self, cmd, lba, data) -> None:
+        # Flush When Buffer is Full
         if len(self.__buffer) >= 10:
             self.flush()
 
@@ -28,12 +29,14 @@ class Buffer:
         if cmd == "E":
             data = int(data)
         self.__buffer.append(entry)
-        # TODO: Call optimize functions
 
+        # Optimize
+        self.optimize_unnecessary_commands()
+
+        # TODO: Call optimize functions
         with open("output/buffer.txt", "w") as file:
             for entry in self.__buffer:
                 file.write(f"{entry['cmd']} {entry['lba']} {entry['data']}\n")
-
 
     def flush(self) -> None:
         for entry in self.__buffer:
@@ -113,5 +116,19 @@ class Buffer:
         elif buffer_cmd['cmd'] == 'E':
             start_addr = buffer_cmd['lba']
             end_addr = buffer_cmd['lba'] + int(buffer_cmd['data'])
-
             return list(range(start_addr, end_addr)), '0x00000000'
+
+    def optimize_unnecessary_commands(self):
+        addr_list = []
+        for buffer_cmd in self.__buffer:
+            addr, _ = self.__get_addr_and_value(buffer_cmd)
+            addr_list.append(addr)
+
+        drop_ids = []
+        buffer_len = len(self.__buffer)
+        for i in range(buffer_len):
+            for j in range(i + 1, buffer_len):
+                if set(addr_list[i]).issubset(addr_list[j]):
+                    drop_ids.append(i)
+                    break
+        self.__buffer = [element for i, element in enumerate(self.__buffer) if i not in drop_ids]
