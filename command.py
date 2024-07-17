@@ -103,7 +103,17 @@ class EraseRangeCommand(Command):
     def run(self):
         if self.end_lba <= self.start_lba:
             return
-        subprocess.run(["python", "ssd.py", "E", str(self.start_lba), str(self.end_lba - self.start_lba)])
+        left_size = self.end_lba - self.start_lba
+        start_address = self.start_lba
+        if left_size <= 10:
+            subprocess.run(["python", "ssd.py", "E", str(self.start_lba), str(left_size)])
+            return
+
+        while left_size // 10:
+            subprocess.run(["python", "ssd.py", "E", str(start_address), str(10)])
+            start_address += 10
+            left_size -= 10
+        subprocess.run(["python", "ssd.py", "E", str(start_address), str(left_size)])
 
 
 def make_command(command: str) -> Command:
