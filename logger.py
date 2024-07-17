@@ -1,8 +1,7 @@
 import functools
 import os
+import time
 from datetime import datetime
-from logging.handlers import RotatingFileHandler
-import logging
 
 
 class Singleton(type):
@@ -16,31 +15,39 @@ class Singleton(type):
 
 class Logger(metaclass=Singleton):
     LOG_DIR = './/log'
+    LOG_FILE = LOG_DIR + '//latest.log'
+    ROTATE_SIZE = 3
+    MAX_SIZE = 10240
+    ENCODING = 'utf-8'
+
 
     def __init__(self):
-        self.logger = logging.getLogger('SingletonLogger')
-        self.logger.setLevel(logging.DEBUG)
-        log_format = logging.Formatter('[%(asctime)s] %(message)s', datefmt='%y.%m.%d %H:%M')
+        self.make_log_file()
 
-        log_path = os.path.join(self.LOG_DIR, 'latest.log')
-        self.handler = RotatingFileHandler(log_path, maxBytes=10240, backupCount=1, encoding='utf-8')  # 10kb 제한
-        self.handler.setFormatter(log_format)
-        self.logger.handlers = []
-        self.logger.addHandler(self.handler)
+    def make_log_file(self):
+        os.makedirs(self.LOG_DIR, exist_ok=True)
 
-        self.compress_old_logs()
+        if not os.path.exists(self.LOG_FILE):
+            with open(self.LOG_FILE, "w", encoding=self.ENCODING):
+                pass
 
     def log(self, instance, func_name, message):
-        func_name_padded = f"{instance.__class__.__name__}.{func_name}()".ljust(50)
-        self.logger.info(f'{func_name_padded}: {message}')
+        timestamp = datetime.now().strftime("%y.%m.%d %H:%M")
+        log_message = f"[{timestamp}] {instance.__class__.__name__}.{func_name}\t\t:{message}\n"
+        self.logging(log_message)
+
+    def logging(self, log_message):
+        with open(self.LOG_FILE, "a", encoding=self.ENCODING) as logfile:
+            logfile.write(log_message)
         self.rotate_log_files()
 
     def rotate_log_files(self):
-        log_path = os.path.join(self.LOG_DIR, 'latest.log')
-        if os.path.exists(log_path + '.1'):
-            timestamp = datetime.now().strftime('%y%m%d_%H%M%S')
-            os.rename(log_path + '.1', os.path.join(self.LOG_DIR, f'until_{timestamp}.log'))
-            self.compress_old_logs()
+        if os.path.getsize(self.LOG_FILE) > self.MAX_SIZE:
+            timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+            rename_file_name = f"/until_{timestamp}.log"
+            os.rename(self.LOG_FILE, self.LOG_DIR + rename_file_name)
+        self.make_log_file()
+        self.compress_old_logs()
 
     def compress_old_logs(self):
         logs = [f for f in os.listdir(self.LOG_DIR) if f.startswith('until_') and f.endswith('.log')]
@@ -49,3 +56,5 @@ class Logger(metaclass=Singleton):
             oldest_log = logs[0]
             oldest_log = os.path.join(self.LOG_DIR, oldest_log)
             os.rename(oldest_log, oldest_log.replace('.log', '.zip'))
+
+
