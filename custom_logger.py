@@ -11,9 +11,9 @@ class CustomLogger:
         self.logger.setLevel(logging.DEBUG)
         log_format = logging.Formatter('[%(asctime)s] %(message)s', datefmt='%y.%m.%d %H:%M')
 
-        self.handler = RotatingFileHandler('latest.log', maxBytes=10240, backupCount=1)  # 10kb 제한
+        self.handler = RotatingFileHandler('latest.log', maxBytes=10240, backupCount=1, encoding='utf-8')  # 10kb 제한
         self.handler.setFormatter(log_format)
-        self.logger.handlers = []  # 기존 핸들러 제거
+        self.logger.handlers = []
         self.logger.addHandler(self.handler)
 
         self.compress_old_logs()
@@ -42,10 +42,8 @@ class CustomLogger:
             @functools.wraps(func)
             def wrapper_logger(*args, **kwargs):
                 func_name = func.__name__
-                cls().log(func_name, f'{message} - 호출됨: args={args}, kwargs={kwargs}')
-                result = func(*args, **kwargs)
-                cls().log(func_name, f'{message} - 반환값: {result}')
-                return result
+                cls().log(func_name, message)
+                return func(*args, **kwargs)
 
             return wrapper_logger
 
