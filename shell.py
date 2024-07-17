@@ -1,10 +1,17 @@
 import re
+import sys
 
 from command import Command, make_command
-from test_app import TestApp, make_test_app
+from test_app import TestApp
 
 
 class Shell:
+    def __init__(self, run_list_file=None):
+        self.run_list_file = run_list_file
+        if not self.run_list_file:
+            return
+        with open(self.run_list_file) as file:
+            self.scripts = [line.strip() for line in file]
 
     def run(self):
         while True:
@@ -19,9 +26,11 @@ class Shell:
         command = command.strip()
         if self.is_ssd_command(command):
             return make_command(command)
-        if self.is_test_command(command):
-            return make_test_app(command)
-        raise ValueError
+        else:
+            try:
+                return TestApp(command)
+            except FileNotFoundError:
+                raise ValueError
 
     @staticmethod
     def is_ssd_command(command):
@@ -43,7 +52,20 @@ class Shell:
     def is_test_command(command):
         return command in ["testapp1", "testapp2"]
 
+    def run_scripts(self):
+        for script in self.scripts:
+            try:
+                test_app = TestApp(script)
+                if not test_app.run():
+                    sys.exit(1)
+            except FileNotFoundError:
+                sys.exit(1)
+
 
 if __name__ == "__main__":
-    shell = Shell()
-    shell.run()
+    if len(sys.argv) == 1:
+        shell = Shell()
+        shell.run()
+    elif len(sys.argv) == 2:
+        shell = Shell(sys.argv[1])
+        shell.run_scripts()
