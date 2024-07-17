@@ -1,6 +1,6 @@
 from abc import ABC
 
-from command import Command
+from command import Command, WriteCommand, EraseCommand
 from constant import *
 
 
@@ -46,6 +46,17 @@ class Buffer:
         # TODO: flush and update SSD
         for cmd_lst in self.__buffer:
             cmd_type = cmd_lst[0]
+            if cmd_type == CMD_W:
+                WriteCommand(**cmd_lst[1:])
+            elif cmd_type == CMD_E:
+                EraseCommand(**cmd_lst[1:])
+            else:
+                ValueError("wrong command in buffer")
+
+        # erase buffer.txt
+        with open("output/buffer.txt", 'w') as file:
+            file.write('')
+
 
     def check_if_read_available(self, lba: int) -> bool:
         pass  # TODO: check if readable from buffer
