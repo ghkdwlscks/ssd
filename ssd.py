@@ -61,7 +61,21 @@ class SSD:
             self.erase()
 
     def erase(self):
-        pass
+        '''
+            시작 주소부터 size 크기만큼 default값으로 초기화합니다.
+            마지막 주소를 넘어가면, 마지막 주소까지만 erase를 진행합니다.
+        '''
+        if self.lba >= 100:
+            return
+        nand_read_result = self.__get_data_list_of_nand_file()
+
+        for _lba in range(int(self.lba), int(self.lba) + int(self.data)):
+            if _lba >= NUM_LBA:
+                break
+            nand_read_result[_lba] = [_lba, VALUE_DEFAULT]
+
+        with open(self.nand_file_path, 'w') as f:
+            f.writelines([f'{_lba} {_data}\n' for _lba, _data in nand_read_result])
 
     def read(self):
         nand_data_list = [x[1] for x in self.__get_data_list_of_nand_file()]
