@@ -45,7 +45,7 @@ class Logger(metaclass=Singleton):
 
     def rotate_log_files(self):
         if os.path.getsize(self.LOG_FILE) > self.MAX_SIZE:
-            timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+            timestamp = datetime.now().strftime("%y%m%d_%Hh_%Mm_%Ss")
             rename_file_name = f"/until_{timestamp}.log"
             os.rename(self.LOG_FILE, self.LOG_DIR + rename_file_name)
         self.make_log_file()
