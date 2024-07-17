@@ -5,7 +5,16 @@ from logging.handlers import RotatingFileHandler
 import logging
 
 
-class CustomLogger:
+class Singleton(type):
+    _instances = {}
+
+    def __call__(cls, *args, **kwargs):
+        if cls not in cls._instances:
+            cls._instances[cls] = super().__call__(*args, **kwargs)
+        return cls._instances[cls]
+
+
+class Logger(metaclass=Singleton):
     def __init__(self):
         self.logger = logging.getLogger('SingletonLogger')
         self.logger.setLevel(logging.DEBUG)
@@ -37,7 +46,7 @@ class CustomLogger:
             os.rename(oldest_log, oldest_log.replace('.log', '.zip'))
 
     @classmethod
-    def custom_logger(cls, message):
+    def logger(cls, message):
         def decorator(func):
             @functools.wraps(func)
             def wrapper_logger(*args, **kwargs):
