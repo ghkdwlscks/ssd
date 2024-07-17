@@ -1,5 +1,6 @@
 import os
 from datetime import datetime
+import inspect
 
 
 class Singleton(type):
@@ -27,10 +28,14 @@ class Logger(metaclass=Singleton):
             with open(self.LOG_FILE, "w", encoding=self.ENCODING):
                 pass
 
-    def log(self, instance, func_name, message):
+    def log(self, message):
+        stack = inspect.stack()
+        the_class = stack[1][0].f_locals["self"].__class__.__name__
+        the_method = stack[1][0].f_code.co_name
+
         timestamp = datetime.now().strftime("%y.%m.%d %H:%M")
-        formatted_function_name = ("[" + timestamp + "]" + instance.__class__.__name__ + "." + func_name).ljust(70)
-        log_message = f"[{formatted_function_name}:{message}\n"
+        formatted_function_name = ("[" + timestamp + "] " + the_class + "." + the_method + "()").ljust(70)
+        log_message = f"{formatted_function_name}:{message}\n"
         self.logging(log_message)
 
     def logging(self, log_message):

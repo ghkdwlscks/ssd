@@ -6,7 +6,6 @@ from constant import *
 from logger import Logger
 
 
-
 class Command(ABC):
     @abstractmethod
     def run(self):
@@ -20,7 +19,7 @@ class ReadCommand(Command):
         self.logger = Logger()
 
     def run(self):
-        self.logger.log(self, "run()", "ReadCommand 실행")
+        self.logger.log("ReadCommand 실행")
         subprocess.run(["python", "ssd.py", "R", self.index])
         self.console.read()
 
@@ -31,7 +30,7 @@ class FullReadCommand(Command):
         self.logger = Logger()
 
     def run(self):
-        self.logger.log(self, "run()", "FullReadCommand 실행")
+        self.logger.log("FullReadCommand 실행")
         for index in range(NUM_LBA):
             read_command = ReadCommand(str(index))
             read_command.run()
@@ -44,7 +43,7 @@ class WriteCommand(Command):
         self.__value = value
 
     def run(self):
-        self.logger.log(self, "run()", "WriteCommand 실행")
+        self.logger.log("WriteCommand 실행")
         subprocess.run(["python", "ssd.py", "W", self.__index, self.__value])
 
 
@@ -56,7 +55,7 @@ class FullWriteCommand(Command):
 
     def run(self):
         for index in range(NUM_LBA):
-            self.logger.log(self, "run()", "FullWriteCommand 실행")
+            self.logger.log("FullWriteCommand 실행")
             write_command = WriteCommand(str(index), self.__value)
             write_command.run()
 
@@ -66,7 +65,7 @@ class ExitCommand(Command):
         self.logger = Logger()
 
     def run(self):
-        self.logger.log(self, "run()", "exit 실행")
+        self.logger.log("exit 실행")
         sys.exit()
 
 
@@ -75,7 +74,7 @@ class HelpCommand(Command):
         self.logger = Logger()
 
     def run(self):
-        self.logger.log(self, "run()", "help 실행")
+        self.logger.log("help 실행")
         print("""
         - write: lba에 데이터를 기록합니다.
             write {{lba}} {{data}}
