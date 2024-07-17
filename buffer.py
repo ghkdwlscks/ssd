@@ -66,11 +66,10 @@ class Buffer:
         if self.is_consecutive(new_arr):
             self.__buffer.pop(-1)
             self.__buffer.pop(-1)
-            self.add('E', sorted_arr[0], len(sorted_arr))
+            self.add(CMD_E, sorted_arr[0], len(sorted_arr))
 
     def optimize_narrow_range_of_erase(self):
-
-        for erase in self.__buffer:
+        for erase_idx, erase in enumerate(self.__buffer):
             if erase['cmd'] != CMD_E: continue
 
             erase_arr = list(range(erase['lba'], erase['lba'] + erase['data']))
@@ -80,21 +79,13 @@ class Buffer:
 
                 erase_arr.remove(write['lba'])
 
-            # if self.is_consecutive(erase_arr):
+            sorted_arr = sorted(erase_arr)
+            if self.is_consecutive(sorted_arr):
+                self.__buffer[erase_idx]['lba'] = sorted_arr[0]
+                self.__buffer[erase_idx]['data'] = len(sorted_arr)
 
 
-
-
-
-
-
-
-
-
-
-
-    def is_consecutive(self, arr):
-        sorted_arr = sorted(arr)
+    def is_consecutive(self, sorted_arr):
         for i in range(1, len(sorted_arr)):
             if sorted_arr[i] != sorted_arr[i-1] +1:
                 return False
@@ -132,3 +123,8 @@ class Buffer:
                     drop_ids.append(i)
                     break
         self.__buffer = [element for i, element in enumerate(self.__buffer) if i not in drop_ids]
+
+
+if __name__ == '__main__':
+    buffer = Buffer()
+    buffer
