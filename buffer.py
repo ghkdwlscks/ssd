@@ -1,6 +1,6 @@
 from command import Command, WriteCommand, EraseCommand
 from constant import *
-
+import pdb
 
 class Buffer:
     def __init__(self):
@@ -21,6 +21,7 @@ class Buffer:
         return buffer
 
     def add(self, cmd, lba, data) -> None:
+        print('aa')
         # Flush When Buffer is Full
         if len(self.__buffer) >= 10:
             self.flush()
@@ -32,6 +33,8 @@ class Buffer:
 
         # Optimize
         self.optimize_unnecessary_commands()
+        self.optimize_merge_sequence_erase()
+        self.optimize_narrow_range_of_erase()
 
         # TODO: Call optimize functions
         with open("output/buffer.txt", "w") as file:
@@ -53,6 +56,8 @@ class Buffer:
             file.write('')
 
     def optimize_merge_sequence_erase(self):
+        if len(self.__buffer): return
+
         before, after = self.__buffer[-2], self.__buffer[-1]
 
         if before['cmd'] != CMD_E or after['cmd'] != CMD_E:
@@ -66,9 +71,12 @@ class Buffer:
         if self.is_consecutive(new_arr):
             self.__buffer.pop(-1)
             self.__buffer.pop(-1)
-            self.add(CMD_E, sorted_arr[0], len(sorted_arr))
+            self.__buffer.append({"cmd": CMD_E, "lba": sorted_arr[0], "data": len(sorted_arr)})
 
     def optimize_narrow_range_of_erase(self):
+        if self.__buffer[-1]['cmd']!= CMD_W:
+            return
+
         for erase_idx, erase in enumerate(self.__buffer):
             if erase['cmd'] != CMD_E: continue
 
@@ -77,10 +85,13 @@ class Buffer:
             for write in self.__buffer:
                 if write['cmd'] != CMD_W: continue
 
-                erase_arr.remove(write['lba'])
+                try:
+                    erase_arr.remove(write['lba'])
+                except:
+                    pass
 
             sorted_arr = sorted(erase_arr)
-            if self.is_consecutive(sorted_arr):
+            if self.is_consecutive(sorted_arr) and len(sorted_arr) != erase['data']:
                 self.__buffer[erase_idx]['lba'] = sorted_arr[0]
                 self.__buffer[erase_idx]['data'] = len(sorted_arr)
 
@@ -124,7 +135,3 @@ class Buffer:
                     break
         self.__buffer = [element for i, element in enumerate(self.__buffer) if i not in drop_ids]
 
-
-if __name__ == '__main__':
-    buffer = Buffer()
-    buffer
