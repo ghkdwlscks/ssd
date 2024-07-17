@@ -2,7 +2,7 @@ from abc import ABC, abstractmethod
 
 from console import Console
 from constant import NUM_LBA, VALUE_DEFAULT, CMD_R, CMD_W, CMD_E
-from functions import check_nand_txt_read_result_validation, is_valid_lba, is_valid_data, can_convert_into_int
+from utils import check_nand_txt_read_result_validation, is_valid_lba, is_valid_data, can_convert_into_int
 
 
 class SSDCommand(ABC):
