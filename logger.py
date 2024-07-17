@@ -18,7 +18,6 @@ class Logger(metaclass=Singleton):
     MAX_SIZE = 10240
     ENCODING = 'utf-8'
 
-
     def __init__(self):
         self.make_log_file()
 
@@ -54,5 +53,3 @@ class Logger(metaclass=Singleton):
             oldest_log = logs[0]
             oldest_log = os.path.join(self.LOG_DIR, oldest_log)
             os.rename(oldest_log, oldest_log.replace('.log', '.zip'))
-
-

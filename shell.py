@@ -9,11 +9,11 @@ from test_app import TestApp
 class Shell:
     def __init__(self, run_list_file=None):
         self.run_list_file = run_list_file
+        self.logger = Logger()
         if not self.run_list_file:
             return
         with open(self.run_list_file) as file:
             self.scripts = [line.strip() for line in file]
-        self.logger = Logger()
 
     def run(self):
         self.logger.log(self, "run()", "Shell 실행")
