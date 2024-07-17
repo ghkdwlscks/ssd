@@ -1,6 +1,7 @@
 from abc import ABC
 
 from command import Command
+from constant import *
 
 
 class BufferEntry(ABC):
@@ -23,14 +24,22 @@ class Buffer:
     def __init__(self):
         self.__buffer = self.load()
 
-    def load(self) -> list[BufferEntry]:
-        pass  # TODO: read buffer entries from buffer.txt and return entries
+    @staticmethod
+    def load() -> list[list[str]]:
+        try:
+            with open("buffer.txt", 'r') as file:
+                buffer = [line.strip().split() for line in file]
+        except FileNotFoundError:
+            return []
+        return buffer
 
     def add(self, command: Command) -> None:
         pass  # TODO: convert Command object to BufferEntry Object and append to self.__buffer
 
     def flush(self) -> None:
-        pass  # TODO: flush and update SSD
+        # TODO: flush and update SSD
+        for cmd_lst in self.__buffer:
+            cmd_type = cmd_lst[0]
 
     def check_if_read_available(self, lba: int) -> bool:
         pass  # TODO: check if readable from buffer
