@@ -33,7 +33,7 @@ class Shell:
             return True
         if re.fullmatch(r"fullwrite 0x[0-9A-F]{8}", command):
             return True
-        if re.fullmatch(r"erase [0-9]{1,2} \d+$", command):
+        if re.fullmatch(r"erase [0-9]{1,2} \b(?:100|\d{1,2})\b$", command):
             return True
         if re.fullmatch(r"erase_range [0-9]{1,2} [0-9]{1,2}", command):
             return True
