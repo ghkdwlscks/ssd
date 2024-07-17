@@ -65,8 +65,6 @@ class SSD:
             시작 주소부터 size 크기만큼 default값으로 초기화합니다.
             마지막 주소를 넘어가면, 마지막 주소까지만 erase를 진행합니다.
         '''
-        if self.lba >= 100:
-            return
         nand_read_result = self.__get_data_list_of_nand_file()
 
         for _lba in range(int(self.lba), int(self.lba) + int(self.data)):
