@@ -11,23 +11,21 @@ class TestApp:
         self.commands, self.answer = self.__read_script_file()
         self.output = None
 
-    def __parse_command_answer_file(self, lines: list[str]):
+    @staticmethod
+    def __parse_command_and_answer(lines: list[str]):
         commands = []
         answer = []
 
-        command_flag = 0
-        answer_flag = 0
+        is_command = True
 
         for line in lines:
             if line.startswith('#') and 'command' in line.lower():
-                command_flag = 1
-                answer_flag = 0
+                is_command = True
             elif line.startswith('#') and 'answer' in line.lower():
-                command_flag = 0
-                answer_flag = 1
-            elif command_flag == 1:
+                is_command = False
+            elif is_command:
                 commands.append(line)
-            elif answer_flag == 1:
+            else:
                 answer.append(line)
 
         return commands, '\n'.join(answer)
@@ -35,7 +33,7 @@ class TestApp:
     def __read_script_file(self):
         with open(self.file_name, 'r') as file:
             lines = [line.strip() for line in file]
-        return self.__parse_command_answer_file(lines)
+        return self.__parse_command_and_answer(lines)
 
     def run(self):
         print(f"{self.test_name} --- Run...", end='', flush=True)
@@ -51,10 +49,9 @@ class TestApp:
         sys.stdout = old_stdout
         if is_valid:
             print(f"Pass")
-            return True
         else:
             print(f"FAIL!")
-            return False
+        return is_valid
 
     @staticmethod
     def _run_command(command: str) -> None:
