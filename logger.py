@@ -1,6 +1,4 @@
-import functools
 import os
-import time
 from datetime import datetime
 
 
@@ -33,7 +31,7 @@ class Logger(metaclass=Singleton):
 
     def log(self, instance, func_name, message):
         timestamp = datetime.now().strftime("%y.%m.%d %H:%M")
-        log_message = f"[{timestamp}] {instance.__class__.__name__}.{func_name}\t\t:{message}\n"
+        log_message = f"[{timestamp}] {instance.__class__.__name__}.{func_name}:{message.rjust(30)}\n"
         self.logging(log_message)
 
     def logging(self, log_message):
