@@ -21,7 +21,6 @@ class Buffer:
         return buffer
 
     def add(self, cmd, lba, data) -> None:
-        print('aa')
         # Flush When Buffer is Full
         if len(self.__buffer) >= 10:
             self.flush()
