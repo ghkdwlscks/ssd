@@ -38,7 +38,7 @@ class TestApp:
         return self.__parse_command_answer_file(lines)
 
     def run(self):
-        print(f"{self.test_name} --- Run...", end='')
+        print(f"{self.test_name} --- Run...", end='', flush=True)
 
         old_stdout = sys.stdout
         self.output = io.StringIO()
