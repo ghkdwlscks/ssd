@@ -29,6 +29,9 @@ class Buffer:
         # TODO: Call optimize functions
         if len(self.__buffer) >= 10:
             self.flush()
+        with open("output/buffer.txt", "w") as file:
+            for entry in self.__buffer:
+                file.write(f"{entry[0]} {entry[1]} {entry[2]}\n")
 
 
     def flush(self) -> None:
