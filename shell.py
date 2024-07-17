@@ -1,7 +1,8 @@
 import re
 import sys
 
-from command import Command, make_command
+from command import Command
+from command_factory import ShellCommandFactory
 from test_app import TestApp
 
 
@@ -25,7 +26,7 @@ class Shell:
     def parse_command(self, command: str) -> Command or TestApp:
         command = command.strip()
         if self.is_ssd_command(command):
-            return make_command(command)
+            return ShellCommandFactory().create_command(command)
         else:
             try:
                 return TestApp(command)

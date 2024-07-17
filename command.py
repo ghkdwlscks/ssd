@@ -11,10 +11,24 @@ class Command(ABC):
     def run(self):
         raise NotImplementedError
 
+    @staticmethod
+    @abstractmethod
+    def get_command_type():
+        pass
+
+    def __init__(self, data1: str or None, data2: str or None):
+        pass
+
 
 class ReadCommand(Command):
-    def __init__(self, index: str):
-        self.index = index
+    @staticmethod
+    def get_command_type():
+        return "read"
+
+    def __init__(self, data1: str, data2: str or None):
+        super().__init__(data1, data2)
+        self.index = data1
+        self.value = data2
         self.console = Console()
 
     def run(self):
@@ -23,6 +37,13 @@ class ReadCommand(Command):
 
 
 class FullReadCommand(Command):
+    @staticmethod
+    def get_command_type():
+        return "fullread"
+
+    def __init__(self, data1: str or None, data2: str or None):
+        super().__init__(data1, data2)
+
     def run(self):
         for index in range(NUM_LBA):
             read_command = ReadCommand(str(index))
@@ -30,9 +51,14 @@ class FullReadCommand(Command):
 
 
 class WriteCommand(Command):
-    def __init__(self, index: str, value: str):
-        self.__index = index
-        self.__value = value
+    @staticmethod
+    def get_command_type():
+        return "write"
+
+    def __init__(self, data1: str, data2: str):
+        super().__init__(data1, data2)
+        self.__index = data1
+        self.__value = data2
 
     def run(self):
         subprocess.run(["python", "ssd.py", "W", self.__index, self.__value])
@@ -40,8 +66,13 @@ class WriteCommand(Command):
 
 class FullWriteCommand(Command):
 
-    def __init__(self, value: str):
-        self.__value = value
+    @staticmethod
+    def get_command_type():
+        return "fullwrite"
+
+    def __init__(self, data1: str or None, data2: str or None):
+        super().__init__(data1, data2)
+        self.__value = data1
 
     def run(self):
         for index in range(NUM_LBA):
@@ -50,36 +81,49 @@ class FullWriteCommand(Command):
 
 
 class ExitCommand(Command):
+    @staticmethod
+    def get_command_type():
+        return "exit"
+
     def run(self):
         sys.exit()
 
 
 class HelpCommand(Command):
 
+    @staticmethod
+    def get_command_type():
+        return "help"
+
     def run(self):
         print("""
-        - write: lba에 데이터를 기록합니다.
-            write {{lba}} {{data}}
+    - write: lba에 데이터를 기록합니다.
+        write {{lba}} {{data}}
 
-        - read: lba에 작성한 데이터를 읽습니다.
-            read {{lba}}
+    - read: lba에 작성한 데이터를 읽습니다.
+        read {{lba}}
 
-        - exit: Shell을 종료합니다.
+    - exit: Shell을 종료합니다.
 
-        - help: 도움말을 표시합니다.
+    - help: 도움말을 표시합니다.
 
-        - fullwrite: 모든 lba에 해당 데이터를 기록합니다.
-            fullwrite {{data}}
+    - fullwrite: 모든 lba에 해당 데이터를 기록합니다.
+        fullwrite {{data}}
 
-        - fullread: 모든 lba 데이터를 읽어 화면에 표시 합니다.
-        """)
+    - fullread: 모든 lba 데이터를 읽어 화면에 표시 합니다.
+    """)
 
 
 class EraseCommand(Command):
 
-    def __init__(self, _lba, _size):
-        self.lba = int(_lba)
-        self.size = int(_size)
+    @staticmethod
+    def get_command_type():
+        return "erase"
+
+    def __init__(self, data1, data2):
+        super().__init__(data1, data2)
+        self.lba = int(data1)
+        self.size = int(data2)
 
     def run(self):
         if self.size <= 10:
@@ -96,9 +140,14 @@ class EraseCommand(Command):
 
 
 class EraseRangeCommand(Command):
-    def __init__(self, _start_lba, _end_lba):
-        self.start_lba = int(_start_lba)
-        self.end_lba = int(_end_lba)
+    @staticmethod
+    def get_command_type():
+        return "erase_range"
+
+    def __init__(self, data1, data2):
+        super().__init__(data1, data2)
+        self.start_lba = int(data1)
+        self.end_lba = int(data2)
 
     def run(self):
         if self.end_lba <= self.start_lba:
@@ -114,25 +163,3 @@ class EraseRangeCommand(Command):
             start_address += 10
             left_size -= 10
         subprocess.run(["python", "ssd.py", "E", str(start_address), str(left_size)])
-
-
-def make_command(command: str) -> Command:
-    command = command.split()
-    command_type = command[0]
-
-    if command_type == "read":
-        return ReadCommand(command[1])
-    if command_type == 'write':
-        return WriteCommand(command[1], command[2])
-    if command_type == "help":
-        return HelpCommand()
-    if command_type == "exit":
-        return ExitCommand()
-    if command_type == "fullread":
-        return FullReadCommand()
-    if command_type == "fullwrite":
-        return FullWriteCommand(command[1])
-    if command_type == "erase":
-        return EraseCommand(command[1], command[2])
-    if command_type == "erase_range":
-        return EraseRangeCommand(command[1], command[2])

@@ -1,7 +1,7 @@
 import io
 import sys
 
-from command import make_command
+from command_factory import ShellCommandFactory
 
 
 class TestApp:
@@ -55,7 +55,7 @@ class TestApp:
 
     @staticmethod
     def _run_command(command: str) -> None:
-        command = make_command(command.strip())
+        command = ShellCommandFactory().create_command(command.strip())
         command.run()
 
     def _validate(self) -> bool:
