@@ -81,11 +81,10 @@ class SSD:
         nand_data_list = [x[1] for x in self.__get_data_list_of_nand_file()]
         self.console.write(nand_data_list[self.lba])
 
-    '''
-    nand.txt를 읽어, list[[lba,data]]을 반환합니다.
-    '''
-
     def __read_nand(self):
+        '''
+        nand.txt를 읽어, list[[lba,data]]을 반환합니다.
+        '''
         result = []
         try:
             with open(self.nand_file_path, 'r') as f:
@@ -120,18 +119,15 @@ class SSD:
                 return False
         return True
 
-    '''
-    nand.txt에 write되는 형식
-    {lba} {data}
-    
-    ex)
-    0 0x0105AB55
-    1 0x020202AA
-    ....
-    99 0x0404012
-    '''
-
     def write(self):
+        '''
+        nand.txt에  {lba} {data} 형식으로 write합니다.
+        ex)
+        0 0x0105AB55
+        1 0x020202AA
+        ....
+        99 0x0404012
+        '''
         nand_read_result = self.__get_data_list_of_nand_file()
 
         nand_read_result[self.lba] = [self.lba, self.data]
@@ -154,6 +150,10 @@ if __name__ == "__main__":
     if len(args) >= 4:
         data = args[3]
 
-    ssd = SSD()
-    ssd.set_command(cmd, int(lba), data)
-    ssd.run()
+    if is_valid_lba(lba):
+        try:
+            ssd = SSD()
+            ssd.set_command(cmd, int(lba), data)
+            ssd.run()
+        except:
+            print('SSD Error')
