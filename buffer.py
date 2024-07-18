@@ -1,6 +1,6 @@
 from ssd_command import SSDWriteCommand, SSDEraseCommand
 from constant import *
-import pdb
+
 
 class Buffer:
     def __init__(self):
@@ -27,7 +27,7 @@ class Buffer:
 
         entry = {"cmd": cmd, "lba": int(lba), "data": data}
         if cmd == "E":
-            data = int(data)
+            entry["data"] = int(data)
         self.__buffer.append(entry)
 
         # Optimize
@@ -75,7 +75,7 @@ class Buffer:
             self.__buffer.append({"cmd": CMD_E, "lba": sorted_arr[0], "data": len(sorted_arr)})
 
     def optimize_narrow_range_of_erase(self):
-        if self.__buffer[-1]['cmd']!= CMD_W:
+        if self.__buffer[-1]['cmd'] != CMD_W:
             return
 
         for erase_idx, erase in enumerate(self.__buffer):
@@ -96,13 +96,11 @@ class Buffer:
                 self.__buffer[erase_idx]['lba'] = sorted_arr[0]
                 self.__buffer[erase_idx]['data'] = len(sorted_arr)
 
-
     def is_consecutive(self, sorted_arr):
         for i in range(1, len(sorted_arr)):
-            if sorted_arr[i] != sorted_arr[i-1] +1:
+            if sorted_arr[i] != sorted_arr[i - 1] + 1:
                 return False
         return True
-
 
     def check_if_read_available(self, lba: int):
 
@@ -135,4 +133,3 @@ class Buffer:
                     drop_ids.append(i)
                     break
         self.__buffer = [element for i, element in enumerate(self.__buffer) if i not in drop_ids]
-
