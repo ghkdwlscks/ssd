@@ -43,9 +43,9 @@ class Buffer:
     def flush(self) -> None:
         for entry in self.__buffer:
             if entry['cmd'] == CMD_W:
-                SSDWriteCommand(str(entry["lba"]), entry["data"])
+                SSDWriteCommand(str(entry["lba"]), entry["data"]).run()
             elif entry['cmd'] == CMD_E:
-                SSDEraseCommand(str(entry["lba"]), str(entry["data"]))
+                SSDEraseCommand(str(entry["lba"]), str(entry["data"])).run()
             else:
                 ValueError("wrong command in buffer")
 
