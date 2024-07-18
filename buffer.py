@@ -50,10 +50,12 @@ class Buffer:
             else:
                 ValueError("wrong command in buffer")
 
-        # erase buffer.txt
-        self.__buffer = list()
-        with open("output/buffer.txt", 'w') as file:
-            file.write('')
+        self.refresh_buffer()
+
+    def refresh_buffer(self):
+        self.__buffer = []
+        with open("output/buffer.txt", "w") as file:
+            file.write("")
 
     def get_lba_array_from_entry(self, entry):
         return list(range(entry['lba'], entry['lba'] + entry['data']))
