@@ -164,4 +164,5 @@ class EraseRangeShellCommand(ShellCommand):
             subprocess.run(["python", "ssd.py", "E", str(start_address), str(10)])
             start_address += 10
             left_size -= 10
-        subprocess.run(["python", "ssd.py", "E", str(start_address), str(left_size)])
+        if left_size:
+            subprocess.run(["python", "ssd.py", "E", str(start_address), str(left_size)])
