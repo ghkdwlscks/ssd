@@ -1,4 +1,5 @@
 NUM_LBA = 100
+MAX_ERASE = 10
 
 INDEX_0 = "0"
 INT_INDEX_5 = 5
