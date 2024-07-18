@@ -1,7 +1,6 @@
 import re
 import sys
 
-
 from shell_command import ShellCommand
 from command_factory import ShellCommandFactory
 from logger import Logger
@@ -28,7 +27,6 @@ class Shell:
                 continue
             command.run()
 
-
     def parse_command(self, command: str) -> ShellCommand or TestApp:
         self.logger.log("command 파싱")
         command = command.strip()
@@ -54,10 +52,6 @@ class Shell:
         if re.fullmatch(r"(erase|erase_range) [0-9]{1,2} \b(?:100|\d{1,2})\b$", command):
             return True
         return False
-
-    @staticmethod
-    def is_test_command(command):
-        return command in ["testapp1", "testapp2"]
 
     def run_scripts(self):
         for script in self.scripts:
