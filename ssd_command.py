@@ -3,7 +3,7 @@ from abc import ABC
 
 from command import Command
 from console import Console
-from constant import NUM_LBA, VALUE_DEFAULT, CMD_R, CMD_W, CMD_E
+from constant import NUM_LBA, VALUE_DEFAULT, CMD_R, CMD_W, CMD_E, CMD_F
 from utils import check_nand_txt_read_result_validation, is_valid_lba, is_valid_data, can_convert_into_int
 
 
@@ -125,3 +125,15 @@ class SSDEraseCommand(SSDCommand):
 
         with open(self.nand_file_path, 'w') as f:
             f.writelines([f'{_lba} {_data}\n' for _lba, _data in nand_read_result])
+
+
+class SSDFlushCommand(SSDCommand):
+    def __init__(self, data1, data2):
+        super().__init__(data1, data2)
+
+    @staticmethod
+    def get_command_type():
+        return CMD_F
+
+    def run(self):
+        pass

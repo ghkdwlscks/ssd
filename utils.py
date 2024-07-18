@@ -37,7 +37,7 @@ def check_nand_txt_read_result_validation(nand_read_result):
 
 
 def is_ssd_command(command):
-    if command in ["help", "exit", "fullread"]:
+    if command in ["help", "exit", "fullread", "flush"]:
         return True
     if re.fullmatch(r"read [0-9]{1,2}", command):
         return True
