@@ -1,10 +1,12 @@
 from ssd_command import SSDWriteCommand, SSDEraseCommand
 from constant import *
+from console import Console
 
 
 class Buffer:
     def __init__(self):
         self.__buffer = self.load()
+        self.console = Console()
 
     @staticmethod
     def load() -> list[dict]:
@@ -102,14 +104,13 @@ class Buffer:
                 return False
         return True
 
-    def check_if_read_available(self, lba: int):
-
+    def read_from_buffer_if_available(self, lba: int) -> bool:
         for buffer_cmd in self.__buffer[::-1]:
             addr, value = self.__get_addr_and_value(buffer_cmd)
             if lba in addr:
-                return value
-
-        return None
+                self.console.write(value)
+                return True
+        return False
 
     def __get_addr_and_value(self, buffer_cmd: dict):
         if buffer_cmd['cmd'] == 'W':
