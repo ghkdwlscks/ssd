@@ -35,7 +35,6 @@ class Buffer:
         self.optimize_merge_sequence_erase()
         self.optimize_narrow_range_of_erase()
 
-        # TODO: Call optimize functions
         with open("output/buffer.txt", "w") as file:
             for entry in self.__buffer:
                 file.write(f"{entry['cmd']} {entry['lba']} {entry['data']}\n")
@@ -54,6 +53,9 @@ class Buffer:
         with open("output/buffer.txt", 'w') as file:
             file.write('')
 
+    def get_lba_array_from_entry(self, entry):
+        return list(range(entry['lba'], entry['lba'] + entry['data']))
+
     def optimize_merge_sequence_erase(self):
         if len(self.__buffer) < 2: return
 
@@ -62,8 +64,8 @@ class Buffer:
         if before['cmd'] != CMD_E or after['cmd'] != CMD_E:
             return
 
-        before_arr = set(range(before['lba'], before['lba'] + before['data']))
-        after_arr = set(range(after['lba'], after['lba'] + after['data']))
+        before_arr = set(self.get_lba_array_from_entry(before))
+        after_arr = set(self.get_lba_array_from_entry(after))
         new_arr = list(before_arr | after_arr)
         sorted_arr = sorted(new_arr)
 
@@ -79,7 +81,7 @@ class Buffer:
         for erase_idx, erase in enumerate(self.__buffer):
             if erase['cmd'] != CMD_E: continue
 
-            erase_arr = list(range(erase['lba'], erase['lba'] + erase['data']))
+            erase_arr = self.get_lba_array_from_entry(erase)
 
             for write in self.__buffer:
                 if write['cmd'] != CMD_W: continue
