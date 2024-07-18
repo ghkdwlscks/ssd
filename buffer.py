@@ -66,6 +66,7 @@ class Buffer:
         if before['cmd'] != CMD_E or after['cmd'] != CMD_E:
             return
 
+
         before_arr = set(self.get_lba_array_from_entry(before))
         after_arr = set(self.get_lba_array_from_entry(after))
         new_arr = list(before_arr | after_arr)
@@ -74,7 +75,11 @@ class Buffer:
         if self.is_consecutive(new_arr):
             self.__buffer.pop(-1)
             self.__buffer.pop(-1)
-            self.__buffer.append({"cmd": CMD_E, "lba": sorted_arr[0], "data": len(sorted_arr)})
+            if len(sorted_arr) <= 10:
+                self.__buffer.append({"cmd": CMD_E, "lba": sorted_arr[0], "data": len(sorted_arr)})
+            else:
+                self.__buffer.append({"cmd": CMD_E, "lba": sorted_arr[0], "data": 10})
+                self.__buffer.append({"cmd": CMD_E, "lba": sorted_arr[0] + 10, "data": len(sorted_arr) - 10})
 
     def optimize_narrow_range_of_erase(self):
         if self.__buffer[-1]['cmd'] != CMD_W:
