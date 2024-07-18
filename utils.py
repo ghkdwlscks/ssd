@@ -1,3 +1,4 @@
+import re
 from constant import NUM_LBA
 
 
@@ -33,3 +34,17 @@ def check_nand_txt_read_result_validation(nand_read_result):
         else:
             return False
     return True
+
+
+def is_ssd_command(command):
+    if command in ["help", "exit", "fullread"]:
+        return True
+    if re.fullmatch(r"read [0-9]{1,2}", command):
+        return True
+    if re.fullmatch(r"write [0-9]{1,2} 0x[0-9A-F]{8}", command):
+        return True
+    if re.fullmatch(r"fullwrite 0x[0-9A-F]{8}", command):
+        return True
+    if re.fullmatch(r"(erase|erase_range) [0-9]{1,2} \b(?:100|\d{1,2})\b$", command):
+        return True
+    return False

@@ -2,6 +2,7 @@ import io
 import sys
 
 from command_factory import ShellCommandFactory
+from utils import is_ssd_command
 
 
 class TestApp:
@@ -43,6 +44,9 @@ class TestApp:
         sys.stdout = self.output
 
         for command in self.commands:
+            if not is_ssd_command(command):
+                self.answer = ""
+                break
             self._run_command(command)
 
         is_valid = self._validate()
@@ -59,4 +63,6 @@ class TestApp:
         command.run()
 
     def _validate(self) -> bool:
+        if len(self.answer.strip()) == 0:
+            return False
         return self.output.getvalue().strip() == self.answer.strip()
