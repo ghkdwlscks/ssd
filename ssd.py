@@ -1,6 +1,7 @@
 import os
 import sys
 
+from buffer import Buffer
 from command_factory import SSDCommandFactory
 from constant import *
 
@@ -11,6 +12,7 @@ class SSD:
         script_directory = os.path.dirname(script_path)
         self.nand_file_path = os.path.join(script_directory, os.getenv('NAND_TXT_PATH', 'output/nand.txt'))
         self.cmd = None
+        self.buffer = Buffer()
 
     def set_command(self, command: str):
         cmd_type = command.split()[0]
