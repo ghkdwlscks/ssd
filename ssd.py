@@ -45,6 +45,7 @@ class SSD:
         with open(self.nand_file_path, 'w') as f:
             for i in range(NUM_LBA):
                 f.write(f'{i} {VALUE_DEFAULT}\n')
+        self.buffer.refresh_buffer()
 
 
 if __name__ == "__main__":
