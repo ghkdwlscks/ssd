@@ -1,4 +1,4 @@
-from command import Command, WriteCommand, EraseCommand
+from ssd_command import SSDWriteCommand, SSDEraseCommand
 from constant import *
 import pdb
 
@@ -43,9 +43,9 @@ class Buffer:
     def flush(self) -> None:
         for entry in self.__buffer:
             if entry['cmd'] == CMD_W:
-                WriteCommand(str(entry["lba"]), entry["data"])
+                SSDWriteCommand(str(entry["lba"]), entry["data"])
             elif entry['cmd'] == CMD_E:
-                EraseCommand(str(entry["lba"]), str(entry["data"]))
+                SSDEraseCommand(str(entry["lba"]), str(entry["data"]))
             else:
                 ValueError("wrong command in buffer")
 
