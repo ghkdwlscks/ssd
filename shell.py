@@ -1,7 +1,9 @@
 import re
 import sys
 
-from command import Command, make_command
+
+from shell_command import ShellCommand
+from command_factory import ShellCommandFactory
 from logger import Logger
 from test_app import TestApp
 
@@ -26,11 +28,12 @@ class Shell:
                 continue
             command.run()
 
-    def parse_command(self, command: str) -> Command or TestApp:
+
+    def parse_command(self, command: str) -> ShellCommand or TestApp:
         self.logger.log("command 파싱")
         command = command.strip()
         if self.is_ssd_command(command):
-            return make_command(command)
+            return ShellCommandFactory(command).create_command()
         else:
             try:
                 return TestApp(command)

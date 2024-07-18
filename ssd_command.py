@@ -1,28 +1,20 @@
-from abc import ABC, abstractmethod
+import os
+from abc import ABC
 
+from command import Command
 from console import Console
 from constant import NUM_LBA, VALUE_DEFAULT, CMD_R, CMD_W, CMD_E
 from utils import check_nand_txt_read_result_validation, is_valid_lba, is_valid_data, can_convert_into_int
 
 
-class SSDCommand(ABC):
-    @staticmethod
-    @abstractmethod
-    def get_cmd_initial():
-        pass
+class SSDCommand(Command, ABC):
 
-    @abstractmethod
-    def run(self):
-        pass
-
-    def __init__(self, ssd, **kwargs):
+    def __init__(self, data1, data2):
+        super().__init__(data1, data2)
         self.console = Console()
-        self.ssd = ssd
-
-    def _refresh_nand(self):
-        with open(self.ssd.nand_file_path, 'w') as f:
-            for i in range(NUM_LBA):
-                f.write(f'{i} {VALUE_DEFAULT}\n')
+        script_path = os.path.abspath(__file__)
+        script_directory = os.path.dirname(script_path)
+        self.nand_file_path = os.path.join(script_directory, os.getenv('NAND_TXT_PATH', 'output/nand.txt'))
 
     def _read_nand(self):
         '''
@@ -30,7 +22,7 @@ class SSDCommand(ABC):
         '''
         result = []
         try:
-            with open(self.ssd.nand_file_path, 'r') as f:
+            with open(self.nand_file_path, 'r') as f:
                 line = f.readline()
 
                 while line:
@@ -38,8 +30,7 @@ class SSDCommand(ABC):
                     result.append([lba, data])
                     line = f.readline()
         except FileNotFoundError:
-            self._refresh_nand()
-            result = self._read_nand()
+            raise FileNotFoundError('nand.txt가 경로에 없습니다.')
         return result
 
     def _get_data_list_of_nand_file(self) -> list[list]:
@@ -47,21 +38,20 @@ class SSDCommand(ABC):
 
         # validation check 에러시, nand 초기화 후 read  재 진행.
         if not check_nand_txt_read_result_validation(result):
-            self._refresh_nand()
-            result = self._get_data_list_of_nand_file()
+            raise ValueError('nand.txt의 데이터에 오류가 있습니다.')
 
         return result
 
 
 class SSDReadCommand(SSDCommand):
     @staticmethod
-    def get_cmd_initial():
+    def get_command_type():
         return CMD_R
 
-    def __init__(self, ssd, **kwargs):
-        super().__init__(ssd, **kwargs)
-        if is_valid_lba(kwargs['data1']):
-            self.lba = int(kwargs['data1'])
+    def __init__(self, data1, data2):
+        super().__init__(data1, data2)
+        if is_valid_lba(data1):
+            self.lba = int(data1)
         else:
             raise AttributeError('Read할 Address가 유효하지 않습니다.')
 
@@ -72,18 +62,18 @@ class SSDReadCommand(SSDCommand):
 
 class SSDWriteCommand(SSDCommand):
     @staticmethod
-    def get_cmd_initial():
+    def get_command_type():
         return CMD_W
 
-    def __init__(self, ssd, **kwargs):
-        super().__init__(ssd, **kwargs)
-        if is_valid_lba(kwargs['data1']):
-            self.lba = int(kwargs['data1'])
+    def __init__(self, data1, data2):
+        super().__init__(data1, data2)
+        if is_valid_lba(data1):
+            self.lba = int(data1)
         else:
             raise ValueError('Write할 Address가 유효하지 않습니다.')
 
-        if is_valid_data(kwargs['data2']):
-            self.data = kwargs['data2']
+        if is_valid_data(data2):
+            self.data = data2
         else:
             raise ValueError('Write할 데이터가 유효하지 않습니다.')
 
@@ -100,24 +90,24 @@ class SSDWriteCommand(SSDCommand):
 
         nand_read_result[self.lba] = [self.lba, self.data]
 
-        with open(self.ssd.nand_file_path, 'w') as f:
+        with open(self.nand_file_path, 'w') as f:
             f.writelines([f'{_lba} {_data}\n' for _lba, _data in nand_read_result])
 
 
 class SSDEraseCommand(SSDCommand):
     @staticmethod
-    def get_cmd_initial():
+    def get_command_type():
         return CMD_E
 
-    def __init__(self, ssd, **kwargs):
-        super().__init__(ssd, **kwargs)
-        if is_valid_lba(kwargs['data1']):
-            self.lba = int(kwargs['data1'])
+    def __init__(self, data1, data2):
+        super().__init__(data1, data2)
+        if is_valid_lba(data1):
+            self.lba = int(data1)
         else:
             raise ValueError('Erase할 Address가 유효하지 않습니다.')
 
-        if can_convert_into_int(kwargs['data2']) and int(kwargs['data2']) <= NUM_LBA:
-            self.size = kwargs['data2']
+        if can_convert_into_int(data2) and int(data2) <= NUM_LBA:
+            self.size = data2
         else:
             raise ValueError('Erase할 사이즈가 유효하지 않습니다.')
 
@@ -133,5 +123,5 @@ class SSDEraseCommand(SSDCommand):
                 break
             nand_read_result[_lba] = [_lba, VALUE_DEFAULT]
 
-        with open(self.ssd.nand_file_path, 'w') as f:
+        with open(self.nand_file_path, 'w') as f:
             f.writelines([f'{_lba} {_data}\n' for _lba, _data in nand_read_result])
