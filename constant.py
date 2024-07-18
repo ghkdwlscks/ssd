@@ -11,7 +11,6 @@ VALUE_0x32991111 = "0x32991111"
 
 CMD_R = 'R'
 CMD_W = 'W'
-CMD_FR = 'FR'
 CMD_E = 'E'
 CMD_LIST = [CMD_R, CMD_W, CMD_E]
 
