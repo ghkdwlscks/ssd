@@ -167,3 +167,15 @@ class EraseRangeShellCommand(ShellCommand):
             left_size -= 10
         if left_size:
             subprocess.run(["python", "ssd.py", "E", str(start_address), str(left_size)])
+
+
+class FlushShellCommand(ShellCommand):
+    def __init__(self, data1=None, data2=None):
+        super().__init__(data1, data2)
+
+    @staticmethod
+    def get_command_type():
+        return "flush"
+
+    def run(self):
+        subprocess.run(["python", "ssd.py", "F"])
