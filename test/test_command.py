@@ -61,6 +61,8 @@ class TestCommand(TestCase):
         fullwrite {{data}}
 
     - fullread: 모든 lba 데이터를 읽어 화면에 표시 합니다.
+    
+    - flush: 버퍼의 command를 수행합니다.
     """
         self.command = HelpShellCommand()
 
