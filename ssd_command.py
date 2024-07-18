@@ -3,7 +3,7 @@ from abc import ABC
 
 from command import Command
 from console import Console
-from constant import NUM_LBA, VALUE_DEFAULT, CMD_R, CMD_W, CMD_E, CMD_F
+from constant import NUM_LBA, MAX_ERASE, VALUE_DEFAULT, CMD_R, CMD_W, CMD_E, CMD_F
 from utils import check_nand_txt_read_result_validation, is_valid_lba, is_valid_data, can_convert_into_int
 
 
@@ -106,7 +106,7 @@ class SSDEraseCommand(SSDCommand):
         else:
             raise ValueError('Erase할 Address가 유효하지 않습니다.')
 
-        if can_convert_into_int(data2) and int(data2) <= NUM_LBA:
+        if can_convert_into_int(data2) and int(data2) <= MAX_ERASE:
             self.size = data2
         else:
             raise ValueError('Erase할 사이즈가 유효하지 않습니다.')
