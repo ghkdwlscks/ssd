@@ -28,8 +28,10 @@ class SSD:
             if self.cmd.get_command_type() == CMD_R:
                 if not self.buffer.read_from_buffer_if_available(self.cmd.lba):
                     self.cmd.run()
-            else:
-                self.cmd.run()
+            elif self.cmd.get_command_type() == CMD_W:
+                self.buffer.add(self.cmd.get_command_type(), self.cmd.lba, self.cmd.data)
+            elif self.cmd.get_command_type() == CMD_E:
+                self.buffer.add(self.cmd.get_command_type(), self.cmd.lba, self.cmd.size)
         except Exception as e:
             print(e)
             print('에러 Fix를 위해 nand를 초기화합니다.')
